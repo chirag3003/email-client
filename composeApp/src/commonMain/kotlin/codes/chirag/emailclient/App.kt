@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import codes.chirag.emailclient.data.MockData
 import codes.chirag.emailclient.state.GlobalState
 import codes.chirag.emailclient.ui.panes.EmailDetailPane
+import codes.chirag.emailclient.ui.panes.ComposePane
 import codes.chirag.emailclient.ui.panes.EmailQueuePane
 import codes.chirag.emailclient.ui.panes.NavigationRail
 import codes.chirag.emailclient.ui.panes.WorkspaceRail
@@ -45,27 +46,35 @@ fun App() {
                     }
                 )
                 
-                // If no email is selected, the queue expands to fill all space.
-                // If an email is selected, the queue shrinks to a fixed width list.
-                val isQueueExpanded = state.activeEmailId == null
-                
-                EmailQueuePane(
-                    emails = state.emails,
-                    activeEmailId = state.activeEmailId,
-                    isExpanded = isQueueExpanded,
-                    onEmailSelected = { id ->
-                        // Toggle selection: if clicking the already selected email, unselect it (null)
-                        state = state.copy(activeEmailId = if (state.activeEmailId == id) null else id)
-                    },
-                    modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
-                )
-                
-                if (!isQueueExpanded) {
-                    val selectedEmail = state.emails.find { it.internalId == state.activeEmailId }
-                    EmailDetailPane(
-                        email = selectedEmail,
-                        modifier = Modifier.weight(1f) // Detail takes remaining space when shown
+                if (state.isComposing) {
+                    ComposePane(
+                        onClose = { state = state.copy(isComposing = false) },
+                        modifier = Modifier.weight(1f)
                     )
+                } else {
+                    // If no email is selected, the queue expands to fill all space.
+                    // If an email is selected, the queue shrinks to a fixed width list.
+                    val isQueueExpanded = state.activeEmailId == null
+                    
+                    EmailQueuePane(
+                        emails = state.emails,
+                        activeEmailId = state.activeEmailId,
+                        isExpanded = isQueueExpanded,
+                        onEmailSelected = { id ->
+                            // Toggle selection: if clicking the already selected email, unselect it (null)
+                            state = state.copy(activeEmailId = if (state.activeEmailId == id) null else id)
+                        },
+                        modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
+                    )
+                    
+                    if (!isQueueExpanded) {
+                        val selectedEmail = state.emails.find { it.internalId == state.activeEmailId }
+                        EmailDetailPane(
+                            email = selectedEmail,
+                            onComposeClicked = { state = state.copy(isComposing = true) },
+                            modifier = Modifier.weight(1f) // Detail takes remaining space when shown
+                        )
+                    }
                 }
             }
         }

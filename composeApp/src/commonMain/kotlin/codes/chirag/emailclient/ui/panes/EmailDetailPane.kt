@@ -24,6 +24,7 @@ import codes.chirag.emailclient.ui.theme.AppTypography
 @Composable
 fun EmailDetailPane(
     email: NormalizedEmail?,
+    onComposeClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -65,16 +66,16 @@ fun EmailDetailPane(
                 Text("j", style = AppTypography.labelSmall, modifier = shortcutModifier())
                 Text("down", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
                 
-                Text("c", style = AppTypography.labelSmall, modifier = shortcutModifier())
-                Text("compose", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
-                
-                Spacer(modifier = Modifier.width(16.dp))
-                Icon(
-                    imageVector = AppIcons.Reply,
-                    contentDescription = "Reply",
-                    tint = EditorialColors.TextMuted,
-                    modifier = Modifier.size(20.dp).clickable { /* TODO */ }
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable { onComposeClicked() }
+                        .padding(4.dp)
+                ) {
+                    Text("c", style = AppTypography.labelSmall, modifier = shortcutModifier())
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("compose", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                }
             }
         }
         
