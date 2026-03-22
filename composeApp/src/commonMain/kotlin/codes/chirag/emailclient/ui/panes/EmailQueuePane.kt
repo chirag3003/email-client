@@ -29,13 +29,13 @@ import codes.chirag.emailclient.ui.theme.AppTypography
 fun EmailQueuePane(
     emails: List<NormalizedEmail>,
     activeEmailId: String?,
+    isExpanded: Boolean,
     onEmailSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .width(350.dp)
             .background(EditorialColors.Surface)
             .border(width = 1.dp, color = EditorialColors.Border)
     ) {
@@ -77,6 +77,7 @@ fun EmailQueuePane(
                 EmailListItem(
                     email = email,
                     isSelected = email.internalId == activeEmailId,
+                    isExpanded = isExpanded,
                     onClick = { onEmailSelected(email.internalId) }
                 )
             }
@@ -110,6 +111,7 @@ fun EmailQueuePane(
 private fun EmailListItem(
     email: NormalizedEmail,
     isSelected: Boolean,
+    isExpanded: Boolean,
     onClick: () -> Unit
 ) {
     Box(
@@ -131,41 +133,82 @@ private fun EmailListItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalAlignment = if (isExpanded) Alignment.CenterVertically else Alignment.Top
         ) {
             // Unread Indicator
             Box(
                 modifier = Modifier
-                    .padding(top = 4.dp, end = 8.dp)
+                    .padding(top = if (isExpanded) 0.dp else 4.dp, end = 12.dp)
                     .size(8.dp)
                     .clip(CircleShape)
                     .background(if (!email.isRead) EditorialColors.UnreadDot else EditorialColors.Background)
             )
             
-            Column(modifier = Modifier.weight(1f)) {
+            if (isExpanded) {
+                // Wide, single-row layout
                 Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = email.senderName,
                         style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                        color = EditorialColors.TextPrimary
+                        color = EditorialColors.TextPrimary,
+                        modifier = Modifier.width(180.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = email.subject,
+                        style = AppTypography.bodyLarge,
+                        color = EditorialColors.TextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = "  —  ${email.snippet}",
+                        style = AppTypography.bodyLarge,
+                        color = EditorialColors.TextMuted,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = email.timestampStr,
                         style = AppTypography.labelMedium,
                         color = EditorialColors.TextMuted
                     )
                 }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = email.subject,
-                    style = AppTypography.bodyLarge,
-                    color = EditorialColors.TextPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+            } else {
+                // Compact, multi-row layout
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = email.senderName,
+                            style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                            color = EditorialColors.TextPrimary
+                        )
+                        Text(
+                            text = email.timestampStr,
+                            style = AppTypography.labelMedium,
+                            color = EditorialColors.TextMuted
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = email.subject,
+                        style = AppTypography.bodyLarge,
+                        color = EditorialColors.TextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }

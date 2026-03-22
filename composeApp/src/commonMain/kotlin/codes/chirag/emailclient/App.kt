@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import codes.chirag.emailclient.data.MockData
 import codes.chirag.emailclient.state.GlobalState
@@ -22,7 +24,7 @@ fun App() {
             mutableStateOf(
                 GlobalState(
                     emails = MockData.MockEmails,
-                    activeEmailId = MockData.MockEmails.firstOrNull()?.internalId
+                    activeEmailId = null // Start with nothing selected
                 )
             ) 
         }
@@ -43,19 +45,28 @@ fun App() {
                     }
                 )
                 
+                // If no email is selected, the queue expands to fill all space.
+                // If an email is selected, the queue shrinks to a fixed width list.
+                val isQueueExpanded = state.activeEmailId == null
+                
                 EmailQueuePane(
                     emails = state.emails,
                     activeEmailId = state.activeEmailId,
+                    isExpanded = isQueueExpanded,
                     onEmailSelected = { id ->
-                        state = state.copy(activeEmailId = id)
-                    }
+                        // Toggle selection: if clicking the already selected email, unselect it (null)
+                        state = state.copy(activeEmailId = if (state.activeEmailId == id) null else id)
+                    },
+                    modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
                 )
                 
-                val selectedEmail = state.emails.find { it.internalId == state.activeEmailId }
-                EmailDetailPane(
-                    email = selectedEmail,
-                    modifier = Modifier.weight(1f) // Takes the rest of the space
-                )
+                if (!isQueueExpanded) {
+                    val selectedEmail = state.emails.find { it.internalId == state.activeEmailId }
+                    EmailDetailPane(
+                        email = selectedEmail,
+                        modifier = Modifier.weight(1f) // Detail takes remaining space when shown
+                    )
+                }
             }
         }
     }
