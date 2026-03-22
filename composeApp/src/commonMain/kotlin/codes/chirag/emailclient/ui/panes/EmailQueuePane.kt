@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ fun EmailQueuePane(
     activeEmailId: String?,
     isExpanded: Boolean,
     onEmailSelected: (String) -> Unit,
+    onComposeClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -39,37 +41,67 @@ fun EmailQueuePane(
             .background(EditorialColors.Surface)
             .border(width = 1.dp, color = EditorialColors.Border)
     ) {
-        // Search Bar
+        // Top Bar Area
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .background(EditorialColors.SurfaceSelected, RoundedCornerShape(8.dp))
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .height(64.dp)
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = AppIcons.Search,
-                contentDescription = "Search",
-                tint = EditorialColors.TextMuted,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "Search...",
-                style = AppTypography.bodyLarge,
-                color = EditorialColors.TextMuted,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = "⌘K",
-                style = AppTypography.labelSmall,
-                color = EditorialColors.TextMuted,
+            // Search Bar
+            Row(
                 modifier = Modifier
-                    .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
-                    .padding(horizontal = 4.dp, vertical = 2.dp)
-            )
+                    .weight(1f)
+                    .background(EditorialColors.SurfaceSelected, RoundedCornerShape(8.dp))
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = AppIcons.Search,
+                    contentDescription = "Search",
+                    tint = EditorialColors.TextMuted,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Search...",
+                    style = AppTypography.bodyLarge,
+                    color = EditorialColors.TextMuted,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "⌘K",
+                    style = AppTypography.labelSmall,
+                    color = EditorialColors.TextMuted,
+                    modifier = Modifier
+                        .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
+            
+            if (isExpanded) {
+                Spacer(modifier = Modifier.width(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable { onComposeClicked() }
+                        .padding(4.dp)
+                ) {
+                    Text(
+                        text = "c", 
+                        style = AppTypography.labelSmall, 
+                        modifier = Modifier
+                            .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("compose", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                }
+            }
         }
+        
+        HorizontalDivider(color = EditorialColors.Border, thickness = 1.dp)
 
         // List
         LazyColumn(modifier = Modifier.weight(1f)) {

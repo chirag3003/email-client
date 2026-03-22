@@ -28,6 +28,7 @@ object AppIcons {
     val Archive: ImageVector = Icons.Default.CheckCircle // Archive alternative
     val Trash: ImageVector = Icons.Default.Delete
     val Reply: ImageVector = Icons.AutoMirrored.Filled.Send // Reply alternative
+    val Close: ImageVector = Icons.Default.Close
     
     // Search
     val Search: ImageVector = Icons.Default.Search

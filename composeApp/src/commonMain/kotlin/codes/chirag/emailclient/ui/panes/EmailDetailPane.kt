@@ -25,6 +25,7 @@ import codes.chirag.emailclient.ui.theme.AppTypography
 fun EmailDetailPane(
     email: NormalizedEmail?,
     onComposeClicked: () -> Unit,
+    onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -37,11 +38,19 @@ fun EmailDetailPane(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .height(64.dp)
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = AppIcons.Close,
+                    contentDescription = "Close",
+                    tint = EditorialColors.TextMuted,
+                    modifier = Modifier.size(20.dp).clickable { onCloseClicked() }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = AppIcons.Archive,
                     contentDescription = "Archive",

@@ -64,6 +64,7 @@ fun App() {
                             // Toggle selection: if clicking the already selected email, unselect it (null)
                             state = state.copy(activeEmailId = if (state.activeEmailId == id) null else id)
                         },
+                        onComposeClicked = { state = state.copy(isComposing = true) },
                         modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
                     )
                     
@@ -72,6 +73,7 @@ fun App() {
                         EmailDetailPane(
                             email = selectedEmail,
                             onComposeClicked = { state = state.copy(isComposing = true) },
+                            onCloseClicked = { state = state.copy(activeEmailId = null) },
                             modifier = Modifier.weight(1f) // Detail takes remaining space when shown
                         )
                     }
