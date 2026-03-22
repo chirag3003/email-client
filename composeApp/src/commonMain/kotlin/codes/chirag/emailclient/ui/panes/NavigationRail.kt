@@ -44,12 +44,6 @@ fun NavigationRail(
             isSelected = activeFolder == FolderType.DRAFTS,
             onClick = { onFolderSelected(FolderType.DRAFTS) }
         )
-        Spacer(modifier = Modifier.height(24.dp))
-        NavFolderItem(
-            icon = AppIcons.PaperPlane,
-            isSelected = activeFolder == FolderType.SENT,
-            onClick = { onFolderSelected(FolderType.SENT) }
-        )
         
         Spacer(modifier = Modifier.weight(1f))
         

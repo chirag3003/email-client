@@ -21,16 +21,19 @@ import codes.chirag.emailclient.ui.components.AppIcons
 import codes.chirag.emailclient.ui.theme.EditorialColors
 import codes.chirag.emailclient.ui.theme.AppTypography
 
+import codes.chirag.emailclient.models.NormalizedEmail
+
 @Composable
 fun ComposePane(
+    draftEmail: NormalizedEmail? = null,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var toText by remember { mutableStateOf("jane@example.com, john@example.com") }
+    var toText by remember { mutableStateOf(draftEmail?.senderEmail ?: "jane@example.com, john@example.com") }
     var ccText by remember { mutableStateOf("") }
     var bccText by remember { mutableStateOf("") }
-    var subjectText by remember { mutableStateOf("What's this about?") }
-    var bodyText by remember { mutableStateOf("") }
+    var subjectText by remember { mutableStateOf(draftEmail?.subject ?: "What's this about?") }
+    var bodyText by remember { mutableStateOf(draftEmail?.bodyText ?: "") }
 
     Column(
         modifier = modifier
@@ -110,7 +113,7 @@ fun ComposePane(
                 Row(
                     modifier = Modifier
                         .height(36.dp)
-                        .background(EditorialColors.Primary, RoundedCornerShape(4.dp))
+                        .background(EditorialColors.Primary, androidx.compose.ui.graphics.RectangleShape)
                         .clickable { onClose() } // In a real app this would trigger send
                 ) {
                     Box(

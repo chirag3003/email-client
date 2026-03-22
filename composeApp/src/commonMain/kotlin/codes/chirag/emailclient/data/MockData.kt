@@ -72,6 +72,32 @@ object MockData {
             timestampStr = "Oct 22",
             timestamp = 1697985720000,
             isRead = true
+        ),
+        NormalizedEmail(
+            internalId = "5",
+            workspace = WorkspaceType.GMAIL,
+            folder = FolderType.DRAFTS,
+            senderName = "Draft",
+            senderEmail = "",
+            subject = "Project Update: Q4 Goals",
+            snippet = "Here are the latest notes regarding our upcoming goals...",
+            bodyText = "Here are the latest notes regarding our upcoming goals for Q4. We need to focus on...",
+            timestampStr = "11:30 AM",
+            timestamp = 1698334800000,
+            isRead = true
+        ),
+        NormalizedEmail(
+            internalId = "6",
+            workspace = WorkspaceType.GMAIL,
+            folder = FolderType.DRAFTS,
+            senderName = "Draft",
+            senderEmail = "",
+            subject = "Follow up: Design Review",
+            snippet = "I've attached the new Figma links for the checkout flow.",
+            bodyText = "I've attached the new Figma links for the checkout flow. Let me know what you think.",
+            timestampStr = "Yesterday",
+            timestamp = 1698244800000,
+            isRead = true
         )
     )
 }
