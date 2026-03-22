@@ -1,48 +1,61 @@
 package codes.chirag.emailclient
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-
-import emailclient.composeapp.generated.resources.Res
-import emailclient.composeapp.generated.resources.compose_multiplatform
+import codes.chirag.emailclient.data.MockData
+import codes.chirag.emailclient.state.GlobalState
+import codes.chirag.emailclient.ui.panes.EmailDetailPane
+import codes.chirag.emailclient.ui.panes.EmailQueuePane
+import codes.chirag.emailclient.ui.panes.NavigationRail
+import codes.chirag.emailclient.ui.panes.WorkspaceRail
+import codes.chirag.emailclient.ui.theme.AppTheme
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
+    AppTheme {
+        var state by remember { 
+            mutableStateOf(
+                GlobalState(
+                    emails = MockData.MockEmails,
+                    activeEmailId = MockData.MockEmails.firstOrNull()?.internalId
+                )
+            ) 
+        }
+
+        Surface(modifier = Modifier.fillMaxSize()) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                WorkspaceRail(
+                    activeWorkspace = state.activeWorkspace,
+                    onWorkspaceSelected = { workspace ->
+                        state = state.copy(activeWorkspace = workspace)
+                    }
+                )
+                
+                NavigationRail(
+                    activeFolder = state.activeFolder,
+                    onFolderSelected = { folder ->
+                        state = state.copy(activeFolder = folder)
+                    }
+                )
+                
+                EmailQueuePane(
+                    emails = state.emails,
+                    activeEmailId = state.activeEmailId,
+                    onEmailSelected = { id ->
+                        state = state.copy(activeEmailId = id)
+                    }
+                )
+                
+                val selectedEmail = state.emails.find { it.internalId == state.activeEmailId }
+                EmailDetailPane(
+                    email = selectedEmail,
+                    modifier = Modifier.weight(1f) // Takes the rest of the space
+                )
             }
         }
     }
