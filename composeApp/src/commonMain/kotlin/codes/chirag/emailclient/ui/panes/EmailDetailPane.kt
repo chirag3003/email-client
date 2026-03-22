@@ -89,7 +89,7 @@ fun EmailDetailPane(
             ) {
                 Text(
                     text = email.subject,
-                    style = AppTypography.bodyMedium.copy(fontSize = 32.sp, fontWeight = FontWeight.SemiBold),
+                    style = AppTypography.bodyLarge.copy(fontSize = 32.sp, fontWeight = FontWeight.SemiBold),
                     color = EditorialColors.TextPrimary
                 )
                 

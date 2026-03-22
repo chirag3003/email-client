@@ -17,6 +17,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import codes.chirag.emailclient.models.NormalizedEmail
 import codes.chirag.emailclient.ui.components.AppIcons
 import codes.chirag.emailclient.ui.theme.EditorialColors
@@ -109,47 +112,61 @@ private fun EmailListItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(if (isSelected) EditorialColors.SurfaceSelected else EditorialColors.Surface)
-            .let { if (isSelected) it.border(1.dp, EditorialColors.Border) else it } // Orange border in mockup? It shows left orange border but let's keep it simple with surface selection.
+            .drawBehind {
+                if (isSelected) {
+                    drawRect(
+                        color = EditorialColors.Primary,
+                        topLeft = Offset.Zero,
+                        size = Size(3.dp.toPx(), size.height)
+                    )
+                }
+            }
+            .border(width = 1.dp, color = EditorialColors.Border, shape = RoundedCornerShape(0.dp))
             .clickable(onClick = onClick)
-            .padding(16.dp)
     ) {
-        // Unread Indicator
-        Box(
+        Row(
             modifier = Modifier
-                .padding(top = 4.dp, end = 8.dp)
-                .size(8.dp)
-                .clip(CircleShape)
-                .background(if (!email.isRead) EditorialColors.UnreadDot else EditorialColors.Background)
-        )
-        
-        Column(modifier = Modifier.weight(1f)) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            // Unread Indicator
+            Box(
+                modifier = Modifier
+                    .padding(top = 4.dp, end = 8.dp)
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(if (!email.isRead) EditorialColors.UnreadDot else EditorialColors.Background)
+            )
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = email.senderName,
+                        style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                        color = EditorialColors.TextPrimary
+                    )
+                    Text(
+                        text = email.timestampStr,
+                        style = AppTypography.labelMedium,
+                        color = EditorialColors.TextMuted
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = email.senderName,
-                    style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                    color = EditorialColors.TextPrimary
-                )
-                Text(
-                    text = email.timestampStr,
-                    style = AppTypography.labelMedium,
-                    color = EditorialColors.TextMuted
+                    text = email.subject,
+                    style = AppTypography.bodyLarge,
+                    color = EditorialColors.TextPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = email.subject,
-                style = AppTypography.bodyLarge,
-                color = EditorialColors.TextPrimary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
         }
     }
 }
