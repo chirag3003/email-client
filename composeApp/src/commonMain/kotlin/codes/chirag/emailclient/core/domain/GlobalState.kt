@@ -11,5 +11,6 @@ data class GlobalState(
     val activeEmailId: String? = null,
     val isComposing: Boolean = false, // Track if we are in full-screen compose mode
     val emails: List<NormalizedEmail> = emptyList(), // Store the local list
-    val searchQuery: String = ""
+    val commandQuery: String = "",
+    val selectedCommandIndex: Int = 0
 )

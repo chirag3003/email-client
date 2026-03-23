@@ -49,36 +49,12 @@ fun EmailQueuePane(
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Search Bar
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .background(EditorialColors.SurfaceSelected, RoundedCornerShape(8.dp))
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = AppIcons.Search,
-                    contentDescription = "Search",
-                    tint = EditorialColors.TextMuted,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Search...",
-                    style = AppTypography.bodyLarge,
-                    color = EditorialColors.TextMuted,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "⌘K",
-                    style = AppTypography.labelSmall,
-                    color = EditorialColors.TextMuted,
-                    modifier = Modifier
-                        .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
-                        .padding(horizontal = 4.dp, vertical = 2.dp)
-                )
-            }
+            Text(
+                text = "Queue",
+                style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                color = EditorialColors.TextPrimary,
+                modifier = Modifier.weight(1f)
+            )
             
             if (isExpanded) {
                 Spacer(modifier = Modifier.width(16.dp))

@@ -6,6 +6,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import codes.chirag.emailclient.core.domain.AppMode
+import codes.chirag.emailclient.core.domain.FolderType
 import codes.chirag.emailclient.core.domain.GlobalState
 import codes.chirag.emailclient.core.input.KeyResult
 import codes.chirag.emailclient.core.input.ShortcutHandler
@@ -52,6 +53,30 @@ class MailShortcutHandler : ShortcutHandler {
             }
             Key.C -> {
                 KeyResult.Handled(state.copy(isComposing = true, activeEmailId = null))
+            }
+            Key.E -> {
+                // Archive current email
+                val activeEmailId = state.activeEmailId
+                if (activeEmailId != null) {
+                    val updatedEmails = state.emails.map {
+                        if (it.internalId == activeEmailId) it.copy(folder = FolderType.ARCHIVE) else it
+                    }
+                    KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
+                } else {
+                    KeyResult.Ignored
+                }
+            }
+            Key.D -> {
+                // Delete current email
+                val activeEmailId = state.activeEmailId
+                if (activeEmailId != null) {
+                    val updatedEmails = state.emails.map {
+                        if (it.internalId == activeEmailId) it.copy(folder = FolderType.TRASH) else it
+                    }
+                    KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
+                } else {
+                    KeyResult.Ignored
+                }
             }
             Key.Escape -> {
                 if (state.activeEmailId != null) {
