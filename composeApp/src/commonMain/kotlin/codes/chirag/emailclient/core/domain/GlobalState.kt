@@ -12,5 +12,6 @@ data class GlobalState(
     val emails: List<NormalizedEmail> = emptyList(), // Store the local list
     val commandQuery: String = "",
     val selectedCommandIndex: Int = 0,
-    val isCheatsheetVisible: Boolean = false
+    val isCheatsheetVisible: Boolean = false,
+    val selectedEmailIds: Set<String> = emptySet()
 )

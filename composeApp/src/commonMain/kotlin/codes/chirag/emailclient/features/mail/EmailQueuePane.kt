@@ -31,10 +31,13 @@ fun EmailQueuePane(
     title: String,
     emails: List<NormalizedEmail>,
     activeEmailId: String?,
+    selectedEmailIds: Set<String>,
     isExpanded: Boolean,
     onEmailSelected: (String) -> Unit,
     onComposeClicked: () -> Unit,
     onEmptyTrash: (() -> Unit)? = null,
+    onTrashSelection: (() -> Unit)? = null,
+    onClearSelection: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -51,49 +54,103 @@ fun EmailQueuePane(
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = title,
-                style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                color = EditorialColors.TextPrimary,
-                modifier = Modifier.weight(1f)
-            )
-            
-            if (onEmptyTrash != null && emails.isNotEmpty()) {
+            if (selectedEmailIds.isNotEmpty()) {
+                // Selection Mode Top Bar
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable { onEmptyTrash() }
-                        .padding(4.dp)
-                ) {
-                    Icon(
-                        imageVector = AppIcons.Trash,
-                        contentDescription = "Empty Trash",
-                        tint = EditorialColors.TextMuted,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Empty Trash", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-            }
-            
-            if (isExpanded) {
-                Spacer(modifier = Modifier.width(16.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable { onComposeClicked() }
-                        .padding(4.dp)
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "c", 
-                        style = AppTypography.labelSmall, 
-                        modifier = Modifier
-                            .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                        text = "${selectedEmailIds.size} Selected",
+                        style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                        color = EditorialColors.Primary
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("compose", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    Spacer(modifier = Modifier.width(24.dp))
+                    
+                    // Trash Selection Button
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable { onTrashSelection?.invoke() }
+                            .padding(4.dp)
+                    ) {
+                        Text(
+                            text = "d", 
+                            style = AppTypography.labelSmall, 
+                            modifier = Modifier
+                                .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("trash", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    }
+                    
+                    Spacer(modifier = Modifier.width(16.dp))
+                    
+                    // Clear Selection Button
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable { onClearSelection?.invoke() }
+                            .padding(4.dp)
+                    ) {
+                        Text(
+                            text = "esc", 
+                            style = AppTypography.labelSmall, 
+                            modifier = Modifier
+                                .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("clear", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    }
+                }
+            } else {
+                // Normal Mode Top Bar
+                Text(
+                    text = title,
+                    style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    color = EditorialColors.TextPrimary,
+                    modifier = Modifier.weight(1f)
+                )
+                
+                if (onEmptyTrash != null && emails.isNotEmpty()) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable { onEmptyTrash() }
+                            .padding(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = AppIcons.Trash,
+                            contentDescription = "Empty Trash",
+                            tint = EditorialColors.TextMuted,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Empty Trash", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                }
+                
+                if (isExpanded) {
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable { onComposeClicked() }
+                            .padding(4.dp)
+                    ) {
+                        Text(
+                            text = "c", 
+                            style = AppTypography.labelSmall, 
+                            modifier = Modifier
+                                .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("compose", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    }
                 }
             }
         }
@@ -106,6 +163,7 @@ fun EmailQueuePane(
                 EmailListItem(
                     email = email,
                     isSelected = email.internalId == activeEmailId,
+                    isMultiSelected = email.internalId in selectedEmailIds,
                     isExpanded = isExpanded,
                     onClick = { onEmailSelected(email.internalId) }
                 )
@@ -140,13 +198,20 @@ fun EmailQueuePane(
 private fun EmailListItem(
     email: NormalizedEmail,
     isSelected: Boolean,
+    isMultiSelected: Boolean,
     isExpanded: Boolean,
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(if (isSelected) EditorialColors.SurfaceSelected else EditorialColors.Surface)
+            .background(
+                when {
+                    isMultiSelected -> EditorialColors.SurfaceSelected.copy(alpha = 0.5f)
+                    isSelected -> EditorialColors.SurfaceSelected
+                    else -> EditorialColors.Surface
+                }
+            )
             .drawBehind {
                 if (isSelected) {
                     drawRect(
@@ -165,14 +230,28 @@ private fun EmailListItem(
                 .padding(16.dp),
             verticalAlignment = if (isExpanded) Alignment.CenterVertically else Alignment.Top
         ) {
-            // Unread Indicator
+            // Multi-Selection "x" indicator or Unread Indicator
             Box(
                 modifier = Modifier
                     .padding(top = if (isExpanded) 0.dp else 4.dp, end = 12.dp)
-                    .size(8.dp)
-                    .clip(CircleShape)
-                    .background(if (!email.isRead) EditorialColors.UnreadDot else EditorialColors.Background)
-            )
+                    .width(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                if (isMultiSelected) {
+                    Text(
+                        text = "x",
+                        style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = EditorialColors.Primary
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(if (!email.isRead) EditorialColors.UnreadDot else EditorialColors.Background)
+                    )
+                }
+            }
             
             if (isExpanded) {
                 // Wide, single-row layout

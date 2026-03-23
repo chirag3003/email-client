@@ -143,6 +143,7 @@ fun App(
                                 title = state.activeFolder.name.lowercase().replaceFirstChar { it.uppercase() },
                                 emails = displayedEmails,
                                 activeEmailId = state.activeEmailId,
+                                selectedEmailIds = state.selectedEmailIds,
                                 isExpanded = isQueueExpanded,
                                 onEmailSelected = { id ->
                                     if (state.activeFolder == FolderType.DRAFTS) {
@@ -153,8 +154,17 @@ fun App(
                                 },
                                 onComposeClicked = { state = state.copy(isComposing = true, activeEmailId = null) },
                                 onEmptyTrash = if (state.activeFolder == FolderType.TRASH) {
-                                    { state = state.copy(emails = state.emails.filter { it.folder != FolderType.TRASH }, activeEmailId = null) }
+                                    { state = state.copy(emails = state.emails.filter { it.folder != FolderType.TRASH }, activeEmailId = null, selectedEmailIds = emptySet()) }
                                 } else null,
+                                onTrashSelection = {
+                                    val updatedEmails = state.emails.map {
+                                        if (it.internalId in state.selectedEmailIds) it.copy(folder = FolderType.TRASH) else it
+                                    }
+                                    state = state.copy(emails = updatedEmails, selectedEmailIds = emptySet(), activeEmailId = null)
+                                },
+                                onClearSelection = {
+                                    state = state.copy(selectedEmailIds = emptySet())
+                                },
                                 modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
                             )
                             

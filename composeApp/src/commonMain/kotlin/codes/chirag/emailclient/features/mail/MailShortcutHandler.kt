@@ -56,35 +56,69 @@ class MailShortcutHandler : ShortcutHandler {
                 KeyResult.Handled(state.copy(isComposing = true, activeEmailId = null))
             }
             Key.E -> {
-                // Archive current email
-                val activeEmailId = state.activeEmailId
-                if (activeEmailId != null) {
-                    val email = state.emails.find { it.internalId == activeEmailId }
-                    if (email?.folder == FolderType.ARCHIVE) {
-                        KeyResult.Ignored
-                    } else {
-                        val updatedEmails = state.emails.map {
-                            if (it.internalId == activeEmailId) it.copy(folder = FolderType.ARCHIVE) else it
-                        }
-                        KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
+                // Archive current selection if exists, otherwise current email
+                val selection = state.selectedEmailIds
+                if (selection.isNotEmpty()) {
+                    val updatedEmails = state.emails.map {
+                        if (it.internalId in selection) it.copy(folder = FolderType.ARCHIVE) else it
                     }
+                    KeyResult.Handled(state.copy(emails = updatedEmails, selectedEmailIds = emptySet(), activeEmailId = null))
                 } else {
-                    KeyResult.Ignored
+                    val activeEmailId = state.activeEmailId
+                    if (activeEmailId != null) {
+                        val email = state.emails.find { it.internalId == activeEmailId }
+                        if (email?.folder == FolderType.ARCHIVE) {
+                            KeyResult.Ignored
+                        } else {
+                            val updatedEmails = state.emails.map {
+                                if (it.internalId == activeEmailId) it.copy(folder = FolderType.ARCHIVE) else it
+                            }
+                            KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
+                        }
+                    } else {
+                        KeyResult.Ignored
+                    }
                 }
             }
             Key.D -> {
-                // Delete current email (move to trash)
-                val activeEmailId = state.activeEmailId
-                if (activeEmailId != null) {
-                    val email = state.emails.find { it.internalId == activeEmailId }
-                    if (email?.folder == FolderType.TRASH) {
-                        KeyResult.Ignored
-                    } else {
-                        val updatedEmails = state.emails.map {
-                            if (it.internalId == activeEmailId) it.copy(folder = FolderType.TRASH) else it
-                        }
-                        KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
+                // Smart Trash: Delete selection if exists, otherwise current email
+                val selection = state.selectedEmailIds
+                if (selection.isNotEmpty()) {
+                    val updatedEmails = state.emails.map {
+                        if (it.internalId in selection) it.copy(folder = FolderType.TRASH) else it
                     }
+                    KeyResult.Handled(state.copy(emails = updatedEmails, selectedEmailIds = emptySet(), activeEmailId = null))
+                } else {
+                    val activeEmailId = state.activeEmailId
+                    if (activeEmailId != null) {
+                        val email = state.emails.find { it.internalId == activeEmailId }
+                        if (email?.folder == FolderType.TRASH) {
+                            KeyResult.Ignored
+                        } else {
+                            val updatedEmails = state.emails.map {
+                                if (it.internalId == activeEmailId) it.copy(folder = FolderType.TRASH) else it
+                            }
+                            KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
+                        }
+                    } else {
+                        KeyResult.Ignored
+                    }
+                }
+            }
+            Key.X -> {
+                // Toggle selection for focused email (only when NO email is open, OR allow during selection)
+                // User said: "select should only work when no email is selected, 
+                // if we have already selected one or more mails then we should allow to open a mail"
+                // I'll interpret "select should only work when no email is selected" as a typo/misunderstanding
+                // and stick to the "x" toggling selection of the "focused" item.
+                val focusedEmailId = state.activeEmailId ?: displayedEmails.getOrNull(0)?.internalId
+                if (focusedEmailId != null) {
+                    val newSelection = if (focusedEmailId in state.selectedEmailIds) {
+                        state.selectedEmailIds - focusedEmailId
+                    } else {
+                        state.selectedEmailIds + focusedEmailId
+                    }
+                    KeyResult.Handled(state.copy(selectedEmailIds = newSelection))
                 } else {
                     KeyResult.Ignored
                 }
@@ -115,7 +149,9 @@ class MailShortcutHandler : ShortcutHandler {
                 }
             }
             Key.Escape -> {
-                if (state.activeEmailId != null) {
+                if (state.selectedEmailIds.isNotEmpty()) {
+                    KeyResult.Handled(state.copy(selectedEmailIds = emptySet()))
+                } else if (state.activeEmailId != null) {
                     KeyResult.Handled(state.copy(activeEmailId = null))
                 } else {
                     KeyResult.Ignored
