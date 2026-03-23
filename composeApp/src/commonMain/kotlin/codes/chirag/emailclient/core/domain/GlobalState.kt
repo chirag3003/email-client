@@ -1,8 +1,4 @@
-package codes.chirag.emailclient.state
-
-import codes.chirag.emailclient.models.WorkspaceType
-import codes.chirag.emailclient.models.FolderType
-import codes.chirag.emailclient.models.NormalizedEmail
+package codes.chirag.emailclient.core.domain
 
 data class GlobalState(
     val currentMode: AppMode = AppMode.QUEUE_NAVIGATION,

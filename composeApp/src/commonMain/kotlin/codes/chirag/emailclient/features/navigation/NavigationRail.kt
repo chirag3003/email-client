@@ -1,4 +1,4 @@
-package codes.chirag.emailclient.ui.panes
+package codes.chirag.emailclient.features.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import codes.chirag.emailclient.models.FolderType
-import codes.chirag.emailclient.ui.components.AppIcons
-import codes.chirag.emailclient.ui.theme.EditorialColors
+import codes.chirag.emailclient.core.domain.FolderType
+import codes.chirag.emailclient.core.ui.AppIcons
+import codes.chirag.emailclient.core.ui.theme.EditorialColors
 
 @Composable
 fun NavigationRail(

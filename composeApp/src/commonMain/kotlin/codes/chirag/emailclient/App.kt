@@ -11,18 +11,18 @@ import androidx.compose.foundation.focusable
 import androidx.compose.ui.input.key.*
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
-import codes.chirag.emailclient.data.MockData
-import codes.chirag.emailclient.state.GlobalState
-import codes.chirag.emailclient.ui.panes.EmailDetailPane
-import codes.chirag.emailclient.ui.panes.ComposePane
-import codes.chirag.emailclient.ui.panes.EmailQueuePane
-import codes.chirag.emailclient.ui.panes.NavigationRail
-import codes.chirag.emailclient.ui.panes.WorkspaceRail
-import codes.chirag.emailclient.ui.theme.AppTheme
+import codes.chirag.emailclient.core.data.MockData
+import codes.chirag.emailclient.core.domain.GlobalState
+import codes.chirag.emailclient.core.domain.FolderType
+import codes.chirag.emailclient.features.mail.EmailDetailPane
+import codes.chirag.emailclient.features.compose.ComposePane
+import codes.chirag.emailclient.features.mail.EmailQueuePane
+import codes.chirag.emailclient.features.navigation.NavigationRail
+import codes.chirag.emailclient.features.navigation.WorkspaceRail
+import codes.chirag.emailclient.core.ui.theme.AppTheme
+import codes.chirag.emailclient.core.input.KeyboardManager
 
 @Composable
-@Preview
 fun App() {
     AppTheme {
         var state by remember { 
@@ -41,45 +41,13 @@ fun App() {
             .fillMaxSize()
             .focusRequester(focusRequester)
             .onKeyEvent { event ->
-                if (event.type == KeyEventType.KeyDown) {
-                    val displayedEmails = state.emails.filter { it.folder == state.activeFolder }
-                    when (event.key) {
-                        Key.J -> {
-                            if (!state.isComposing) {
-                                val currentIndex = displayedEmails.indexOfFirst { it.internalId == state.activeEmailId }
-                                val nextIndex = if (currentIndex < displayedEmails.size - 1) currentIndex + 1 else currentIndex
-                                val nextEmailId = if (currentIndex == -1 && displayedEmails.isNotEmpty()) displayedEmails[0].internalId else displayedEmails.getOrNull(nextIndex)?.internalId
-                                if (nextEmailId != null) state = state.copy(activeEmailId = nextEmailId)
-                                return@onKeyEvent true
-                            }
-                        }
-                        Key.K -> {
-                            if (!state.isComposing) {
-                                val currentIndex = displayedEmails.indexOfFirst { it.internalId == state.activeEmailId }
-                                val prevIndex = if (currentIndex > 0) currentIndex - 1 else 0
-                                val prevEmailId = if (currentIndex == -1 && displayedEmails.isNotEmpty()) displayedEmails[0].internalId else displayedEmails.getOrNull(prevIndex)?.internalId
-                                if (prevEmailId != null) state = state.copy(activeEmailId = prevEmailId)
-                                return@onKeyEvent true
-                            }
-                        }
-                        Key.C -> {
-                            if (!state.isComposing) {
-                                state = state.copy(isComposing = true, activeEmailId = null)
-                                return@onKeyEvent true
-                            }
-                        }
-                        Key.Escape -> {
-                            if (state.isComposing) {
-                                state = state.copy(isComposing = false, activeEmailId = null)
-                                return@onKeyEvent true
-                            } else if (state.activeEmailId != null) {
-                                state = state.copy(activeEmailId = null)
-                                return@onKeyEvent true
-                            }
-                        }
-                    }
+                val newState = KeyboardManager.handleEvent(event, state)
+                if (newState != state) {
+                    state = newState
+                    true
+                } else {
+                    false
                 }
-                false
             }
             .focusable()
         ) {
@@ -118,7 +86,7 @@ fun App() {
                         activeEmailId = state.activeEmailId,
                         isExpanded = isQueueExpanded,
                         onEmailSelected = { id ->
-                            if (state.activeFolder == codes.chirag.emailclient.models.FolderType.DRAFTS) {
+                            if (state.activeFolder == FolderType.DRAFTS) {
                                 // If we are in the Drafts folder, clicking an item opens Compose directly
                                 state = state.copy(activeEmailId = id, isComposing = true)
                             } else {

@@ -1,4 +1,4 @@
-package codes.chirag.emailclient.ui.components
+package codes.chirag.emailclient.core.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send

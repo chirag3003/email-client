@@ -1,4 +1,4 @@
-package codes.chirag.emailclient.ui.theme
+package codes.chirag.emailclient.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

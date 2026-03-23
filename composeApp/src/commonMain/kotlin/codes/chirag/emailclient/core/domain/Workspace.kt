@@ -1,4 +1,4 @@
-package codes.chirag.emailclient.models
+package codes.chirag.emailclient.core.domain
 
 enum class WorkspaceType {
     GMAIL,    // Corresponds to 'G' in mockup

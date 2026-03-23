@@ -1,8 +1,8 @@
-package codes.chirag.emailclient.data
+package codes.chirag.emailclient.core.data
 
-import codes.chirag.emailclient.models.FolderType
-import codes.chirag.emailclient.models.NormalizedEmail
-import codes.chirag.emailclient.models.WorkspaceType
+import codes.chirag.emailclient.core.domain.FolderType
+import codes.chirag.emailclient.core.domain.NormalizedEmail
+import codes.chirag.emailclient.core.domain.WorkspaceType
 
 object MockData {
     val MockEmails = listOf(

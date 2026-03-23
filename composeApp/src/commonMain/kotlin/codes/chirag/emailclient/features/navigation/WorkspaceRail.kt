@@ -1,4 +1,4 @@
-package codes.chirag.emailclient.ui.panes
+package codes.chirag.emailclient.features.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import codes.chirag.emailclient.models.WorkspaceType
-import codes.chirag.emailclient.ui.components.AppIcons
-import codes.chirag.emailclient.ui.theme.EditorialColors
-import codes.chirag.emailclient.ui.theme.AppTypography
+import codes.chirag.emailclient.core.domain.WorkspaceType
+import codes.chirag.emailclient.core.ui.AppIcons
+import codes.chirag.emailclient.core.ui.theme.EditorialColors
+import codes.chirag.emailclient.core.ui.theme.AppTypography
 
 @Composable
 fun WorkspaceRail(

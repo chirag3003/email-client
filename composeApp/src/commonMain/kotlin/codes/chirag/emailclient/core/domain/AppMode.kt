@@ -1,4 +1,4 @@
-package codes.chirag.emailclient.state
+package codes.chirag.emailclient.core.domain
 
 enum class AppMode {
     QUEUE_NAVIGATION, // j, k, Enter active

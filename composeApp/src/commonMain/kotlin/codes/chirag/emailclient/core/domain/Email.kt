@@ -1,4 +1,4 @@
-package codes.chirag.emailclient.models
+package codes.chirag.emailclient.core.domain
 
 data class NormalizedEmail(
     val internalId: String,

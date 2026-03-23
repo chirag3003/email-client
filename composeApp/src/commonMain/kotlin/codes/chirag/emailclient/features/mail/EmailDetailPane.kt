@@ -1,4 +1,4 @@
-package codes.chirag.emailclient.ui.panes
+package codes.chirag.emailclient.features.mail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,10 +16,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import codes.chirag.emailclient.models.NormalizedEmail
-import codes.chirag.emailclient.ui.components.AppIcons
-import codes.chirag.emailclient.ui.theme.EditorialColors
-import codes.chirag.emailclient.ui.theme.AppTypography
+import codes.chirag.emailclient.core.domain.NormalizedEmail
+import codes.chirag.emailclient.core.ui.AppIcons
+import codes.chirag.emailclient.core.ui.theme.EditorialColors
+import codes.chirag.emailclient.core.ui.theme.AppTypography
 
 @Composable
 fun EmailDetailPane(
