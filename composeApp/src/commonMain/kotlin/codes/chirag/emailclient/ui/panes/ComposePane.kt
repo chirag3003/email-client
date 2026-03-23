@@ -41,6 +41,26 @@ fun ComposePane(
             .background(EditorialColors.Background)
             .border(width = 1.dp, color = EditorialColors.Border)
     ) {
+        // Top Action Bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = AppIcons.Close,
+                contentDescription = "Close",
+                tint = EditorialColors.TextMuted,
+                modifier = Modifier
+                    .size(20.dp)
+                    .clickable { onClose() }
+            )
+        }
+
+        HorizontalDivider(color = EditorialColors.Border, thickness = 1.dp)
+
         // Main Compose Area
         Column(
             modifier = Modifier
