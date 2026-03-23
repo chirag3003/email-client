@@ -4,9 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,13 +46,13 @@ fun Cheatsheet(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(EditorialColors.Background.copy(alpha = 0.8f))
+            .background(EditorialColors.Background.copy(alpha = 0.85f))
             .clickable(onClick = onDismiss),
         contentAlignment = Alignment.Center
     ) {
         Surface(
             modifier = Modifier
-                .width(500.dp)
+                .width(700.dp)
                 .clickable(enabled = false) {},
             shape = RoundedCornerShape(12.dp),
             color = EditorialColors.Surface,
@@ -68,13 +67,15 @@ fun Cheatsheet(
                 
                 Spacer(modifier = Modifier.height(24.dp))
                 
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        ShortcutSection("Navigation", navigationShortcuts)
+                Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+                    Column(modifier = Modifier.weight(1f).border(1.dp, EditorialColors.Border)) {
+                        ShortcutTableHeader("Navigation")
+                        navigationShortcuts.forEach { ShortcutTableRow(it) }
                     }
-                    Spacer(modifier = Modifier.width(32.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        ShortcutSection("Actions", actionShortcuts)
+                    Spacer(modifier = Modifier.width(24.dp))
+                    Column(modifier = Modifier.weight(1f).border(1.dp, EditorialColors.Border)) {
+                        ShortcutTableHeader("Actions")
+                        actionShortcuts.forEach { ShortcutTableRow(it) }
                     }
                 }
                 
@@ -92,32 +93,45 @@ fun Cheatsheet(
 }
 
 @Composable
-private fun ShortcutSection(title: String, shortcuts: List<ShortcutInfo>) {
-    Text(
-        text = title.uppercase(),
-        style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
-        color = EditorialColors.TextMuted
-    )
-    Spacer(modifier = Modifier.height(12.dp))
-    shortcuts.forEach { shortcut ->
-        Row(
-            modifier = Modifier.padding(vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = shortcut.label,
-                style = AppTypography.bodyMedium,
-                color = EditorialColors.TextPrimary,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = shortcut.keys,
-                style = AppTypography.labelSmall,
-                color = EditorialColors.TextMuted,
-                modifier = Modifier
-                    .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
-                    .padding(horizontal = 6.dp, vertical = 2.dp)
-            )
-        }
+private fun ShortcutTableHeader(title: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(EditorialColors.SurfaceSelected)
+            .padding(12.dp)
+    ) {
+        Text(
+            text = title.uppercase(),
+            style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            color = EditorialColors.TextMuted
+        )
     }
+    HorizontalDivider(color = EditorialColors.Border, thickness = 1.dp)
+}
+
+@Composable
+private fun ShortcutTableRow(shortcut: ShortcutInfo) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = shortcut.label,
+            style = AppTypography.bodyMedium,
+            color = EditorialColors.TextPrimary,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = shortcut.keys,
+            style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            color = EditorialColors.Primary,
+            modifier = Modifier
+                .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
+                .background(EditorialColors.Background)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+    }
+    HorizontalDivider(color = EditorialColors.Border, thickness = 1.dp)
 }

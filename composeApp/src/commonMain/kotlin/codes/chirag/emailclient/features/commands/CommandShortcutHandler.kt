@@ -21,23 +21,21 @@ class CommandShortcutHandler(
             }
         }
 
-        if (state.isCheatsheetVisible && event.type == KeyEventType.KeyDown && event.key == Key.Escape) {
-            return KeyResult.Handled(state.copy(isCheatsheetVisible = false))
+        // Handle Escape for overlays early to ensure it can close them regardless of current palette state
+        if (event.type == KeyEventType.KeyDown && event.key == Key.Escape) {
+            if (state.isCheatsheetVisible) {
+                return KeyResult.Handled(state.copy(isCheatsheetVisible = false))
+            }
+            if (state.currentMode == AppMode.COMMAND_PALETTE) {
+                return KeyResult.Handled(state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = "", selectedCommandIndex = 0))
+            }
         }
 
         if (state.currentMode != AppMode.COMMAND_PALETTE) return KeyResult.Ignored
         if (event.type != KeyEventType.KeyDown) return KeyResult.Ignored
 
+
         return when (event.key) {
-            Key.Escape -> {
-                if (state.isCheatsheetVisible) {
-                    KeyResult.Handled(state.copy(isCheatsheetVisible = false))
-                } else if (state.currentMode == AppMode.COMMAND_PALETTE) {
-                    KeyResult.Handled(state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = "", selectedCommandIndex = 0))
-                } else {
-                    KeyResult.Ignored
-                }
-            }
             Key.DirectionDown -> {
                 KeyResult.Handled(state.copy(selectedCommandIndex = state.selectedCommandIndex + 1))
             }

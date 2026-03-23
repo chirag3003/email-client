@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import codes.chirag.emailclient.core.domain.Command
@@ -75,7 +76,15 @@ fun CommandPalette(
                         cursorBrush = SolidColor(EditorialColors.Primary),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .focusRequester(focusRequester),
+                            .focusRequester(focusRequester)
+                            .onPreviewKeyEvent { event ->
+                                if (event.type == KeyEventType.KeyDown && event.key == Key.Escape) {
+                                    onDismiss()
+                                    true
+                                } else {
+                                    false
+                                }
+                            },
                         singleLine = true
                     )
                 }
