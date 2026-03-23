@@ -5,7 +5,6 @@ data class GlobalState(
     val activeWorkspace: WorkspaceType = WorkspaceType.GMAIL,
     val activeFolder: FolderType = FolderType.INBOX,
     val selectedQueueIndex: Int = 0,
-    val isAgendaVisible: Boolean = false,
     
     // Derived/Selected state for display
     val activeEmailId: String? = null,

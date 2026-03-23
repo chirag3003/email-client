@@ -53,7 +53,6 @@ fun App(
                 Command("Switch to Work", "Ctrl+2") { state = state.copy(activeWorkspace = WorkspaceType.WORK, currentMode = AppMode.QUEUE_NAVIGATION) },
                 Command("Switch to Personal", "Ctrl+3") { state = state.copy(activeWorkspace = WorkspaceType.PERSONAL, currentMode = AppMode.QUEUE_NAVIGATION) },
                 Command("Compose New Email", "c") { state = state.copy(isComposing = true, activeEmailId = null, currentMode = AppMode.COMPOSE_MODE) },
-                Command("Toggle Agenda", "v") { state = state.copy(isAgendaVisible = !state.isAgendaVisible, currentMode = AppMode.QUEUE_NAVIGATION) },
                 Command("Empty Trash", null) { /* TODO */ state = state.copy(currentMode = AppMode.QUEUE_NAVIGATION) }
             )
         }
