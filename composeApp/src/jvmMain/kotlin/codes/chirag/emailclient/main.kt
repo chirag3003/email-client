@@ -9,10 +9,14 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+
 fun main() = application {
     val windowState = rememberWindowState(
         placement = WindowPlacement.Maximized,
-        position = WindowPosition(Alignment.Center)
+        position = WindowPosition(Alignment.Center),
+        size = DpSize(1200.dp, 800.dp)
     )
     
     Window(

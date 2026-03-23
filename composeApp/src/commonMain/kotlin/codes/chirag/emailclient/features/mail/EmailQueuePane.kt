@@ -32,7 +32,7 @@ import codes.chirag.emailclient.core.domain.NormalizedEmail
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
 import codes.chirag.emailclient.core.ui.theme.AppTypography
-
+import androidx.compose.ui.draw.clipToBounds
 @Composable
 fun EmailQueuePane(
     title: String,
@@ -206,6 +206,7 @@ fun EmailQueuePane(
     }
 }
 
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EmailListItem(
@@ -223,6 +224,7 @@ private fun EmailListItem(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .clipToBounds()
             .onPointerEvent(PointerEventType.Enter) { isHovered = true }
             .onPointerEvent(PointerEventType.Exit) { isHovered = false }
             .background(

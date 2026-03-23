@@ -1,5 +1,8 @@
 package codes.chirag.emailclient
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
@@ -9,6 +12,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.foundation.focusable
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.BoxWithConstraints
 import codes.chirag.emailclient.core.data.MockData
 import codes.chirag.emailclient.core.domain.*
 import codes.chirag.emailclient.features.mail.EmailDetailPane
@@ -127,75 +132,128 @@ fun App(
                                 state = state.copy(activeFolder = folder, activeEmailId = null)
                             }
                         )
-                        
-                        if (state.isComposing) {
-                            val draftEmail = state.emails.find { it.internalId == state.activeEmailId }
-                            ComposePane(
-                                draftEmail = draftEmail,
-                                onClose = { state = state.copy(isComposing = false, activeEmailId = null) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        } else {
-                            val displayedEmails = state.emails.filter { it.folder == state.activeFolder }
-                            val isQueueExpanded = state.activeEmailId == null
-                            
-                            EmailQueuePane(
-                                title = state.activeFolder.name.lowercase().replaceFirstChar { it.uppercase() },
-                                emails = displayedEmails,
-                                activeEmailId = state.activeEmailId,
-                                selectedEmailIds = state.selectedEmailIds,
-                                isExpanded = isQueueExpanded,
-                                onEmailSelected = { id ->
-                                    if (state.activeFolder == FolderType.DRAFTS) {
-                                        state = state.copy(activeEmailId = id, isComposing = true)
-                                    } else {
-                                        state = state.copy(activeEmailId = if (state.activeEmailId == id) null else id)
-                                    }
-                                },
-                                onComposeClicked = { state = state.copy(isComposing = true, activeEmailId = null) },
-                                onEmptyTrash = if (state.activeFolder == FolderType.TRASH) {
-                                    { state = state.copy(emails = state.emails.filter { it.folder != FolderType.TRASH }, activeEmailId = null, selectedEmailIds = emptySet()) }
-                                } else null,
-                                onTrashSelection = {
-                                    val updatedEmails = state.emails.map {
-                                        if (it.internalId in state.selectedEmailIds) it.copy(folder = FolderType.TRASH) else it
-                                    }
-                                    state = state.copy(emails = updatedEmails, selectedEmailIds = emptySet(), activeEmailId = null)
-                                },
-                                onClearSelection = {
-                                    state = state.copy(selectedEmailIds = emptySet())
-                                },
-                                onArchiveEmail = { id ->
-                                    val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.ARCHIVE) else it }
-                                    state = state.copy(emails = updated, activeEmailId = null)
-                                },
-                                onDeleteEmail = { id ->
-                                    val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.TRASH) else it }
-                                    state = state.copy(emails = updated, activeEmailId = null)
-                                },
-                                modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
-                            )
-                            
-                            if (!isQueueExpanded) {
-                                val selectedEmail = state.emails.find { it.internalId == state.activeEmailId }
-                                EmailDetailPane(
-                                    email = selectedEmail,
-                                    onComposeClicked = { state = state.copy(isComposing = true) },
-                                    onCloseClicked = { state = state.copy(activeEmailId = null) },
-                                    onArchive = { id ->
-                                        val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.ARCHIVE) else it }
-                                        state = state.copy(emails = updated, activeEmailId = null)
-                                    },
-                                    onDelete = { id ->
-                                        val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.TRASH) else it }
-                                        state = state.copy(emails = updated, activeEmailId = null)
-                                    },
-                                    onRestore = { id ->
-                                        val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.INBOX) else it }
-                                        state = state.copy(emails = updated, activeEmailId = null)
-                                    },
-                                    modifier = Modifier.weight(1f)
+
+                        BoxWithConstraints(modifier = Modifier.weight(1f)) {
+                            val containerWidth = maxWidth
+                            val isSmallScreen = containerWidth < 1000.dp
+                            val isDetailOpen = state.activeEmailId != null
+
+                            if (state.isComposing) {
+                                val draftEmail = state.emails.find { it.internalId == state.activeEmailId }
+                                ComposePane(
+                                    draftEmail = draftEmail,
+                                    onClose = { state = state.copy(isComposing = false, activeEmailId = null) },
+                                    modifier = Modifier.fillMaxSize()
                                 )
+                            } else {
+                                Row(modifier = Modifier.fillMaxSize()) {
+                                    // Queue Pane with width animation
+                                    val queueModifier = if (isSmallScreen) {
+                                        if (isDetailOpen) Modifier.size(0.dp) else Modifier.fillMaxSize()
+                                    } else {
+                                        if (isDetailOpen) Modifier.width(350.dp) else Modifier.fillMaxSize()
+                                    }
+
+                                    Box(modifier = queueModifier.animateContentSize(tween(300, easing = FastOutSlowInEasing))) {
+                                        val displayedEmails = state.emails.filter { it.folder == state.activeFolder }
+                                        EmailQueuePane(
+                                            title = state.activeFolder.name.lowercase()
+                                                .replaceFirstChar { it.uppercase() },
+                                            emails = displayedEmails,
+                                            activeEmailId = state.activeEmailId,
+                                            selectedEmailIds = state.selectedEmailIds,
+                                            isExpanded = !isDetailOpen,
+                                            onEmailSelected = { id ->
+                                                if (state.activeFolder == FolderType.DRAFTS) {
+                                                    state = state.copy(activeEmailId = id, isComposing = true)
+                                                } else {
+                                                    state = state.copy(
+                                                        activeEmailId = if (state.activeEmailId == id) null else id
+                                                    )
+                                                }
+                                            },
+                                            onComposeClicked = {
+                                                state = state.copy(isComposing = true, activeEmailId = null)
+                                            },
+                                            onEmptyTrash = if (state.activeFolder == FolderType.TRASH) {
+                                                {
+                                                    state = state.copy(
+                                                        emails = state.emails.filter { it.folder != FolderType.TRASH },
+                                                        activeEmailId = null,
+                                                        selectedEmailIds = emptySet()
+                                                    )
+                                                }
+                                            } else null,
+                                            onTrashSelection = {
+                                                val updatedEmails = state.emails.map {
+                                                    if (it.internalId in state.selectedEmailIds) it.copy(folder = FolderType.TRASH) else it
+                                                }
+                                                state = state.copy(
+                                                    emails = updatedEmails,
+                                                    selectedEmailIds = emptySet(),
+                                                    activeEmailId = null
+                                                )
+                                            },
+                                            onClearSelection = {
+                                                state = state.copy(selectedEmailIds = emptySet())
+                                            },
+                                            onArchiveEmail = { id ->
+                                                val updated = state.emails.map {
+                                                    if (it.internalId == id) it.copy(folder = FolderType.ARCHIVE) else it
+                                                }
+                                                state = state.copy(emails = updated, activeEmailId = null)
+                                            },
+                                            onDeleteEmail = { id ->
+                                                val updated = state.emails.map {
+                                                    if (it.internalId == id) it.copy(folder = FolderType.TRASH) else it
+                                                }
+                                                state = state.copy(emails = updated, activeEmailId = null)
+                                            },
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    }
+
+                                    // Detail Pane with Slide Animation
+                                    AnimatedVisibility(
+                                        visible = isDetailOpen,
+                                        enter = slideInHorizontally(
+                                            initialOffsetX = { it },
+                                            animationSpec = tween(300, easing = FastOutSlowInEasing)
+                                        ) + fadeIn(),
+                                        exit = slideOutHorizontally(
+                                            targetOffsetX = { it },
+                                            animationSpec = tween(300, easing = FastOutSlowInEasing)
+                                        ) + fadeOut(),
+                                        modifier = if (isSmallScreen) Modifier.fillMaxSize() else Modifier.weight(1f)
+                                    ) {
+                                        val selectedEmail =
+                                            state.emails.find { it.internalId == state.activeEmailId }
+                                        EmailDetailPane(
+                                            email = selectedEmail,
+                                            onComposeClicked = { state = state.copy(isComposing = true) },
+                                            onCloseClicked = { state = state.copy(activeEmailId = null) },
+                                            onArchive = { id ->
+                                                val updated = state.emails.map {
+                                                    if (it.internalId == id) it.copy(folder = FolderType.ARCHIVE) else it
+                                                }
+                                                state = state.copy(emails = updated, activeEmailId = null)
+                                            },
+                                            onDelete = { id ->
+                                                val updated = state.emails.map {
+                                                    if (it.internalId == id) it.copy(folder = FolderType.TRASH) else it
+                                                }
+                                                state = state.copy(emails = updated, activeEmailId = null)
+                                            },
+                                            onRestore = { id ->
+                                                val updated = state.emails.map {
+                                                    if (it.internalId == id) it.copy(folder = FolderType.INBOX) else it
+                                                }
+                                                state = state.copy(emails = updated, activeEmailId = null)
+                                            },
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
