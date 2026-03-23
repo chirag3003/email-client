@@ -2,6 +2,8 @@ package codes.chirag.emailclient
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -21,9 +23,18 @@ import codes.chirag.emailclient.features.navigation.NavigationRail
 import codes.chirag.emailclient.features.navigation.WorkspaceRail
 import codes.chirag.emailclient.core.ui.theme.AppTheme
 import codes.chirag.emailclient.core.input.KeyboardManager
+import codes.chirag.emailclient.core.ui.components.TitleBar
 
 @Composable
-fun App() {
+fun App(
+    onMinimize: () -> Unit = {},
+    onMaximize: () -> Unit = {},
+    onClose: () -> Unit = {},
+    draggableArea: @Composable (Modifier, @Composable () -> Unit) -> Unit = { modifier, content -> 
+        Box(modifier) { content() } 
+    }
+) {
+    val platform = getPlatform()
     AppTheme {
         var state by remember { 
             mutableStateOf(
@@ -37,75 +48,86 @@ fun App() {
         val focusRequester = remember { FocusRequester() }
         LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
-        Surface(modifier = Modifier
-            .fillMaxSize()
-            .focusRequester(focusRequester)
-            .onKeyEvent { event ->
-                val newState = KeyboardManager.handleEvent(event, state)
-                if (newState != state) {
-                    state = newState
-                    true
-                } else {
-                    false
-                }
+        Column(modifier = Modifier.fillMaxSize()) {
+            if (platform.isDesktop) {
+                TitleBar(
+                    onMinimize = onMinimize,
+                    onMaximize = onMaximize,
+                    onClose = onClose,
+                    draggableArea = draggableArea
+                )
             }
-            .focusable()
-        ) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                WorkspaceRail(
-                    activeWorkspace = state.activeWorkspace,
-                    onWorkspaceSelected = { workspace ->
-                        state = state.copy(activeWorkspace = workspace)
+            
+            Surface(modifier = Modifier
+                .weight(1f)
+                .focusRequester(focusRequester)
+                .onKeyEvent { event ->
+                    val newState = KeyboardManager.handleEvent(event, state)
+                    if (newState != state) {
+                        state = newState
+                        true
+                    } else {
+                        false
                     }
-                )
-                
-                NavigationRail(
-                    activeFolder = state.activeFolder,
-                    onFolderSelected = { folder ->
-                        state = state.copy(activeFolder = folder)
-                    }
-                )
-                
-                if (state.isComposing) {
-                    val draftEmail = state.emails.find { it.internalId == state.activeEmailId }
-                    ComposePane(
-                        draftEmail = draftEmail,
-                        onClose = { state = state.copy(isComposing = false, activeEmailId = null) },
-                        modifier = Modifier.weight(1f)
-                    )
-                } else {
-                    // Filter emails by the active folder
-                    val displayedEmails = state.emails.filter { it.folder == state.activeFolder }
-                    
-                    // If no email is selected, the queue expands to fill all space.
-                    // If an email is selected, the queue shrinks to a fixed width list.
-                    val isQueueExpanded = state.activeEmailId == null
-                    
-                    EmailQueuePane(
-                        emails = displayedEmails,
-                        activeEmailId = state.activeEmailId,
-                        isExpanded = isQueueExpanded,
-                        onEmailSelected = { id ->
-                            if (state.activeFolder == FolderType.DRAFTS) {
-                                // If we are in the Drafts folder, clicking an item opens Compose directly
-                                state = state.copy(activeEmailId = id, isComposing = true)
-                            } else {
-                                // Toggle selection: if clicking the already selected email, unselect it (null)
-                                state = state.copy(activeEmailId = if (state.activeEmailId == id) null else id)
-                            }
-                        },
-                        onComposeClicked = { state = state.copy(isComposing = true, activeEmailId = null) },
-                        modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
+                }
+                .focusable()
+            ) {
+                Row(modifier = Modifier.fillMaxSize()) {
+                    WorkspaceRail(
+                        activeWorkspace = state.activeWorkspace,
+                        onWorkspaceSelected = { workspace ->
+                            state = state.copy(activeWorkspace = workspace)
+                        }
                     )
                     
-                    if (!isQueueExpanded) {
-                        val selectedEmail = state.emails.find { it.internalId == state.activeEmailId }
-                        EmailDetailPane(
-                            email = selectedEmail,
-                            onComposeClicked = { state = state.copy(isComposing = true) },
-                            onCloseClicked = { state = state.copy(activeEmailId = null) },
-                            modifier = Modifier.weight(1f) // Detail takes remaining space when shown
+                    NavigationRail(
+                        activeFolder = state.activeFolder,
+                        onFolderSelected = { folder ->
+                            state = state.copy(activeFolder = folder)
+                        }
+                    )
+                    
+                    if (state.isComposing) {
+                        val draftEmail = state.emails.find { it.internalId == state.activeEmailId }
+                        ComposePane(
+                            draftEmail = draftEmail,
+                            onClose = { state = state.copy(isComposing = false, activeEmailId = null) },
+                            modifier = Modifier.weight(1f)
                         )
+                    } else {
+                        // Filter emails by the active folder
+                        val displayedEmails = state.emails.filter { it.folder == state.activeFolder }
+                        
+                        // If no email is selected, the queue expands to fill all space.
+                        // If an email is selected, the queue shrinks to a fixed width list.
+                        val isQueueExpanded = state.activeEmailId == null
+                        
+                        EmailQueuePane(
+                            emails = displayedEmails,
+                            activeEmailId = state.activeEmailId,
+                            isExpanded = isQueueExpanded,
+                            onEmailSelected = { id ->
+                                if (state.activeFolder == FolderType.DRAFTS) {
+                                    // If we are in the Drafts folder, clicking an item opens Compose directly
+                                    state = state.copy(activeEmailId = id, isComposing = true)
+                                } else {
+                                    // Toggle selection: if clicking the already selected email, unselect it (null)
+                                    state = state.copy(activeEmailId = if (state.activeEmailId == id) null else id)
+                                }
+                            },
+                            onComposeClicked = { state = state.copy(isComposing = true, activeEmailId = null) },
+                            modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
+                        )
+                        
+                        if (!isQueueExpanded) {
+                            val selectedEmail = state.emails.find { it.internalId == state.activeEmailId }
+                            EmailDetailPane(
+                                email = selectedEmail,
+                                onComposeClicked = { state = state.copy(isComposing = true) },
+                                onCloseClicked = { state = state.copy(activeEmailId = null) },
+                                modifier = Modifier.weight(1f) // Detail takes remaining space when shown
+                            )
+                        }
                     }
                 }
             }

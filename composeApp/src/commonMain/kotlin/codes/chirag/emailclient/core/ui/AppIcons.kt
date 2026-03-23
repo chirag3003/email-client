@@ -1,35 +1,33 @@
 package codes.chirag.emailclient.core.ui
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.*
 
 /**
- * Abstracted icon definitions. 
- * Currently using standard Compose Material icons as placeholders.
- * Easily swap these to `painterResource` (SVGs) when actual assets are provided.
+ * Abstracted icon definitions using Feather Icons.
+ * Provides a minimalist, consistent editorial aesthetic.
  */
 object AppIcons {
     // Workspace Rail
-    val WorkspaceGoogle: ImageVector = Icons.Default.Email // Placeholder for 'G'
-    val WorkspaceWork: ImageVector = Icons.Default.Build // Placeholder for 'W'
-    val WorkspacePersonal: ImageVector = Icons.Default.Person // Placeholder for 'P'
-    val AddWorkspace: ImageVector = Icons.Default.Add
-    val Settings: ImageVector = Icons.Default.Settings
+    val WorkspaceGoogle: ImageVector = FeatherIcons.Mail
+    val WorkspaceWork: ImageVector = FeatherIcons.Briefcase
+    val WorkspacePersonal: ImageVector = FeatherIcons.User
+    val AddWorkspace: ImageVector = FeatherIcons.Plus
+    val Settings: ImageVector = FeatherIcons.Settings
 
     // Navigation Rail
-    val Profile: ImageVector = Icons.Default.AccountCircle
-    val Inbox: ImageVector = Icons.Default.Email
-    val Document: ImageVector = Icons.Default.Create // Drafts/Docs
-    val PaperPlane: ImageVector = Icons.AutoMirrored.Filled.Send
+    val Profile: ImageVector = FeatherIcons.User
+    val Inbox: ImageVector = FeatherIcons.Inbox
+    val Drafts: ImageVector = FeatherIcons.Edit // Drafts/Docs
+    val PaperPlane: ImageVector = FeatherIcons.Send
 
     // Action Bar (Detail Pane)
-    val Archive: ImageVector = Icons.Default.CheckCircle // Archive alternative
-    val Trash: ImageVector = Icons.Default.Delete
-    val Reply: ImageVector = Icons.AutoMirrored.Filled.Send // Reply alternative
-    val Close: ImageVector = Icons.Default.Close
+    val Archive: ImageVector = FeatherIcons.CheckCircle
+    val Trash: ImageVector = FeatherIcons.Trash2
+    val Reply: ImageVector = FeatherIcons.CornerUpLeft
+    val Close: ImageVector = FeatherIcons.X
     
     // Search
-    val Search: ImageVector = Icons.Default.Search
+    val Search: ImageVector = FeatherIcons.Search
 }
