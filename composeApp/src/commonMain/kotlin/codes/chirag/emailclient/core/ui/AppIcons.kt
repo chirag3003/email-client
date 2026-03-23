@@ -19,12 +19,11 @@ object AppIcons {
     // Navigation Rail
     val Profile: ImageVector = FeatherIcons.User
     val Inbox: ImageVector = FeatherIcons.Inbox
+    val Sent: ImageVector = FeatherIcons.Send
     val Drafts: ImageVector = FeatherIcons.Edit // Drafts/Docs
-    val PaperPlane: ImageVector = FeatherIcons.Send
-
-    // Action Bar (Detail Pane)
-    val Archive: ImageVector = FeatherIcons.CheckCircle
+    val Archive: ImageVector = FeatherIcons.Archive
     val Trash: ImageVector = FeatherIcons.Trash2
+    val PaperPlane: ImageVector = FeatherIcons.Send
     val Reply: ImageVector = FeatherIcons.CornerUpLeft
     val Close: ImageVector = FeatherIcons.X
     

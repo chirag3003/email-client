@@ -43,9 +43,11 @@ fun App(
 
         val commands = remember(state) {
             listOf(
-                Command("Go to Inbox", "g i") { state = state.copy(activeFolder = FolderType.INBOX, currentMode = AppMode.QUEUE_NAVIGATION) },
-                Command("Go to Drafts", "g d") { state = state.copy(activeFolder = FolderType.DRAFTS, currentMode = AppMode.QUEUE_NAVIGATION) },
-                Command("Go to Sent", "g s") { state = state.copy(activeFolder = FolderType.SENT, currentMode = AppMode.QUEUE_NAVIGATION) },
+                Command("Go to Inbox", "g i") { state = state.copy(activeFolder = FolderType.INBOX, currentMode = AppMode.QUEUE_NAVIGATION, activeEmailId = null) },
+                Command("Go to Sent", "g s") { state = state.copy(activeFolder = FolderType.SENT, currentMode = AppMode.QUEUE_NAVIGATION, activeEmailId = null) },
+                Command("Go to Drafts", "g d") { state = state.copy(activeFolder = FolderType.DRAFTS, currentMode = AppMode.QUEUE_NAVIGATION, activeEmailId = null) },
+                Command("Go to Archive", "g a") { state = state.copy(activeFolder = FolderType.ARCHIVE, currentMode = AppMode.QUEUE_NAVIGATION, activeEmailId = null) },
+                Command("Go to Trash", "g t") { state = state.copy(activeFolder = FolderType.TRASH, currentMode = AppMode.QUEUE_NAVIGATION, activeEmailId = null) },
                 Command("Switch to Gmail", "Ctrl+1") { state = state.copy(activeWorkspace = WorkspaceType.GMAIL, currentMode = AppMode.QUEUE_NAVIGATION) },
                 Command("Switch to Work", "Ctrl+2") { state = state.copy(activeWorkspace = WorkspaceType.WORK, currentMode = AppMode.QUEUE_NAVIGATION) },
                 Command("Switch to Personal", "Ctrl+3") { state = state.copy(activeWorkspace = WorkspaceType.PERSONAL, currentMode = AppMode.QUEUE_NAVIGATION) },
@@ -113,7 +115,7 @@ fun App(
                         NavigationRail(
                             activeFolder = state.activeFolder,
                             onFolderSelected = { folder ->
-                                state = state.copy(activeFolder = folder)
+                                state = state.copy(activeFolder = folder, activeEmailId = null)
                             }
                         )
                         

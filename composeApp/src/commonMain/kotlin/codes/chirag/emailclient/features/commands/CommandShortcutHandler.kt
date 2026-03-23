@@ -26,7 +26,7 @@ class CommandShortcutHandler(
 
         return when (event.key) {
             Key.Escape -> {
-                KeyResult.Handled(state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = ""))
+                KeyResult.Handled(state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = "", selectedCommandIndex = 0))
             }
             Key.DirectionDown -> {
                 KeyResult.Handled(state.copy(selectedCommandIndex = state.selectedCommandIndex + 1))

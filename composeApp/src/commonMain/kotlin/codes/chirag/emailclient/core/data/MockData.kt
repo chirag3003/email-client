@@ -98,6 +98,58 @@ object MockData {
             timestampStr = "Yesterday",
             timestamp = 1698244800000,
             isRead = true
+        ),
+        NormalizedEmail(
+            internalId = "7",
+            workspace = WorkspaceType.GMAIL,
+            folder = FolderType.SENT,
+            senderName = "Me",
+            senderEmail = "me@example.com",
+            subject = "Project Proposal",
+            snippet = "Hi team, find the attached proposal for the new project.",
+            bodyText = "Hi team,\n\nI've attached the latest project proposal for the upcoming Q4 goals. Looking forward to your feedback.\n\nBest,\nMe",
+            timestampStr = "10:00 AM",
+            timestamp = 1698328800000,
+            isRead = true
+        ),
+        NormalizedEmail(
+            internalId = "8",
+            workspace = WorkspaceType.GMAIL,
+            folder = FolderType.SENT,
+            senderName = "Me",
+            senderEmail = "me@example.com",
+            subject = "Coffee tomorrow?",
+            snippet = "Hey, let's catch up at that new cafe we talked about.",
+            bodyText = "Hey,\n\nAre you free for coffee tomorrow afternoon? I'd love to catch up and talk about the latest updates.\n\nCheers!",
+            timestampStr = "Yesterday",
+            timestamp = 1698242400000,
+            isRead = true
+        ),
+        NormalizedEmail(
+            internalId = "9",
+            workspace = WorkspaceType.GMAIL,
+            folder = FolderType.ARCHIVE,
+            senderName = "Airbnb",
+            senderEmail = "no-reply@airbnb.com",
+            subject = "Reservation confirmed!",
+            snippet = "Your upcoming trip to Tokyo is all set for November.",
+            bodyText = "Pack your bags! Your reservation in Tokyo is confirmed for Nov 12 - Nov 18. Here are the check-in details...",
+            timestampStr = "Oct 15",
+            timestamp = 1697380800000,
+            isRead = true
+        ),
+        NormalizedEmail(
+            internalId = "10",
+            workspace = WorkspaceType.GMAIL,
+            folder = FolderType.TRASH,
+            senderName = "Spam Bot",
+            senderEmail = "spam@example.com",
+            subject = "You won a million dollars!",
+            snippet = "Click here to claim your prize immediately!",
+            bodyText = "Congratulations! You have been selected to win a prize of $1,000,000. Just click the link below to provide your bank details...",
+            timestampStr = "Oct 10",
+            timestamp = 1696948800000,
+            isRead = true
         )
     )
 }

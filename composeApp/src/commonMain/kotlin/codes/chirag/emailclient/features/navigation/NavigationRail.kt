@@ -40,9 +40,27 @@ fun NavigationRail(
         )
         Spacer(modifier = Modifier.height(24.dp))
         NavFolderItem(
+            icon = AppIcons.Sent,
+            isSelected = activeFolder == FolderType.SENT,
+            onClick = { onFolderSelected(FolderType.SENT) }
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        NavFolderItem(
             icon = AppIcons.Drafts,
             isSelected = activeFolder == FolderType.DRAFTS,
             onClick = { onFolderSelected(FolderType.DRAFTS) }
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        NavFolderItem(
+            icon = AppIcons.Archive,
+            isSelected = activeFolder == FolderType.ARCHIVE,
+            onClick = { onFolderSelected(FolderType.ARCHIVE) }
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        NavFolderItem(
+            icon = AppIcons.Trash,
+            isSelected = activeFolder == FolderType.TRASH,
+            onClick = { onFolderSelected(FolderType.TRASH) }
         )
         
         Spacer(modifier = Modifier.weight(1f))
