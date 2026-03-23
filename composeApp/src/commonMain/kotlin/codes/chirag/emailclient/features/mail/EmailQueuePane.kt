@@ -28,11 +28,13 @@ import codes.chirag.emailclient.core.ui.theme.AppTypography
 
 @Composable
 fun EmailQueuePane(
+    title: String,
     emails: List<NormalizedEmail>,
     activeEmailId: String?,
     isExpanded: Boolean,
     onEmailSelected: (String) -> Unit,
     onComposeClicked: () -> Unit,
+    onEmptyTrash: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -50,11 +52,30 @@ fun EmailQueuePane(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Queue",
+                text = title,
                 style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                 color = EditorialColors.TextPrimary,
                 modifier = Modifier.weight(1f)
             )
+            
+            if (onEmptyTrash != null && emails.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable { onEmptyTrash() }
+                        .padding(4.dp)
+                ) {
+                    Icon(
+                        imageVector = AppIcons.Trash,
+                        contentDescription = "Empty Trash",
+                        tint = EditorialColors.TextMuted,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Empty Trash", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+            }
             
             if (isExpanded) {
                 Spacer(modifier = Modifier.width(16.dp))

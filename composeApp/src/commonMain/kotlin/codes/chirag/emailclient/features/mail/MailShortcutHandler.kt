@@ -3,6 +3,7 @@ package codes.chirag.emailclient.features.mail
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import codes.chirag.emailclient.core.domain.AppMode
@@ -16,7 +17,7 @@ class MailShortcutHandler : ShortcutHandler {
         if (event.type != KeyEventType.KeyDown) return KeyResult.Ignored
         
         // Don't intercept global shortcuts if we're in compose or command mode
-        if (state.isComposing || state.currentMode == AppMode.COMMAND_PALETTE) return KeyResult.Ignored
+        if (state.isComposing || state.currentMode == AppMode.COMMAND_PALETTE || state.isCheatsheetVisible) return KeyResult.Ignored
 
         val displayedEmails = state.emails.filter { it.folder == state.activeFolder }
         
@@ -58,22 +59,57 @@ class MailShortcutHandler : ShortcutHandler {
                 // Archive current email
                 val activeEmailId = state.activeEmailId
                 if (activeEmailId != null) {
-                    val updatedEmails = state.emails.map {
-                        if (it.internalId == activeEmailId) it.copy(folder = FolderType.ARCHIVE) else it
+                    val email = state.emails.find { it.internalId == activeEmailId }
+                    if (email?.folder == FolderType.ARCHIVE) {
+                        KeyResult.Ignored
+                    } else {
+                        val updatedEmails = state.emails.map {
+                            if (it.internalId == activeEmailId) it.copy(folder = FolderType.ARCHIVE) else it
+                        }
+                        KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
                     }
-                    KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
                 } else {
                     KeyResult.Ignored
                 }
             }
             Key.D -> {
-                // Delete current email
+                // Delete current email (move to trash)
                 val activeEmailId = state.activeEmailId
                 if (activeEmailId != null) {
-                    val updatedEmails = state.emails.map {
-                        if (it.internalId == activeEmailId) it.copy(folder = FolderType.TRASH) else it
+                    val email = state.emails.find { it.internalId == activeEmailId }
+                    if (email?.folder == FolderType.TRASH) {
+                        KeyResult.Ignored
+                    } else {
+                        val updatedEmails = state.emails.map {
+                            if (it.internalId == activeEmailId) it.copy(folder = FolderType.TRASH) else it
+                        }
+                        KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
                     }
-                    KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
+                } else {
+                    KeyResult.Ignored
+                }
+            }
+            Key.R -> {
+                // Restore current email (move to inbox)
+                val activeEmailId = state.activeEmailId
+                if (activeEmailId != null) {
+                    val email = state.emails.find { it.internalId == activeEmailId }
+                    if (email?.folder == FolderType.TRASH) {
+                        val updatedEmails = state.emails.map {
+                            if (it.internalId == activeEmailId) it.copy(folder = FolderType.INBOX) else it
+                        }
+                        KeyResult.Handled(state.copy(emails = updatedEmails, activeEmailId = null))
+                    } else {
+                        KeyResult.Ignored
+                    }
+                } else {
+                    KeyResult.Ignored
+                }
+            }
+            Key.Slash -> {
+                // Toggle cheatsheet with '?' (Shift + '/')
+                if (event.isShiftPressed) {
+                    KeyResult.Handled(state.copy(isCheatsheetVisible = true))
                 } else {
                     KeyResult.Ignored
                 }

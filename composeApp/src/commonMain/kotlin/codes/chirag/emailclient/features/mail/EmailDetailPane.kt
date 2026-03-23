@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import codes.chirag.emailclient.core.domain.FolderType
 import codes.chirag.emailclient.core.domain.NormalizedEmail
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
@@ -26,6 +27,9 @@ fun EmailDetailPane(
     email: NormalizedEmail?,
     onComposeClicked: () -> Unit,
     onCloseClicked: () -> Unit,
+    onArchive: (String) -> Unit = {},
+    onDelete: (String) -> Unit = {},
+    onRestore: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -51,24 +55,47 @@ fun EmailDetailPane(
                     modifier = Modifier.size(20.dp).clickable { onCloseClicked() }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = AppIcons.Archive,
-                    contentDescription = "Archive",
-                    tint = EditorialColors.TextMuted,
-                    modifier = Modifier.size(20.dp).clickable { /* TODO */ }
-                )
-                Icon(
-                    imageVector = AppIcons.Trash,
-                    contentDescription = "Trash",
-                    tint = EditorialColors.TextMuted,
-                    modifier = Modifier.size(20.dp).clickable { /* TODO */ }
-                )
+                
+                if (email?.folder == FolderType.TRASH) {
+                    Icon(
+                        imageVector = AppIcons.Inbox,
+                        contentDescription = "Restore",
+                        tint = EditorialColors.TextMuted,
+                        modifier = Modifier.size(20.dp).clickable { email?.let { onRestore(it.internalId) } }
+                    )
+                } else {
+                    Icon(
+                        imageVector = AppIcons.Archive,
+                        contentDescription = "Archive",
+                        tint = EditorialColors.TextMuted,
+                        modifier = Modifier.size(20.dp).clickable { email?.let { onArchive(it.internalId) } }
+                    )
+                    Icon(
+                        imageVector = AppIcons.Trash,
+                        contentDescription = "Trash",
+                        tint = EditorialColors.TextMuted,
+                        modifier = Modifier.size(20.dp).clickable { email?.let { onDelete(it.internalId) } }
+                    )
+                }
             }
             
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                if (email?.folder == FolderType.TRASH) {
+                    Text("r", style = AppTypography.labelSmall, modifier = shortcutModifier())
+                    Text("restore", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                } else {
+                    Text("e", style = AppTypography.labelSmall, modifier = shortcutModifier())
+                    Text("archive", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    
+                    Text("d", style = AppTypography.labelSmall, modifier = shortcutModifier())
+                    Text("delete", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                }
+                
+                Spacer(modifier = Modifier.width(8.dp))
+                
                 Text("k", style = AppTypography.labelSmall, modifier = shortcutModifier())
                 Text("up", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
                 

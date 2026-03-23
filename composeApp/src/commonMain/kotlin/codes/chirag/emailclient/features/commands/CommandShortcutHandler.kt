@@ -15,10 +15,14 @@ class CommandShortcutHandler(
             event.key == Key.K && 
             (event.isCtrlPressed || event.isMetaPressed)) {
             return if (state.currentMode == AppMode.COMMAND_PALETTE) {
-                KeyResult.Handled(state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = ""))
+                KeyResult.Handled(state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = "", selectedCommandIndex = 0))
             } else {
-                KeyResult.Handled(state.copy(currentMode = AppMode.COMMAND_PALETTE, commandQuery = "", selectedCommandIndex = 0))
+                KeyResult.Handled(state.copy(currentMode = AppMode.COMMAND_PALETTE, commandQuery = "", selectedCommandIndex = 0, isCheatsheetVisible = false))
             }
+        }
+
+        if (state.isCheatsheetVisible && event.type == KeyEventType.KeyDown && event.key == Key.Escape) {
+            return KeyResult.Handled(state.copy(isCheatsheetVisible = false))
         }
 
         if (state.currentMode != AppMode.COMMAND_PALETTE) return KeyResult.Ignored
@@ -26,7 +30,13 @@ class CommandShortcutHandler(
 
         return when (event.key) {
             Key.Escape -> {
-                KeyResult.Handled(state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = "", selectedCommandIndex = 0))
+                if (state.isCheatsheetVisible) {
+                    KeyResult.Handled(state.copy(isCheatsheetVisible = false))
+                } else if (state.currentMode == AppMode.COMMAND_PALETTE) {
+                    KeyResult.Handled(state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = "", selectedCommandIndex = 0))
+                } else {
+                    KeyResult.Ignored
+                }
             }
             Key.DirectionDown -> {
                 KeyResult.Handled(state.copy(selectedCommandIndex = state.selectedCommandIndex + 1))

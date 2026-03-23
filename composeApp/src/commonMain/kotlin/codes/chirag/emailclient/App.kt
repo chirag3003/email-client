@@ -20,6 +20,7 @@ import codes.chirag.emailclient.core.ui.theme.AppTheme
 import codes.chirag.emailclient.core.input.KeyboardManager
 import codes.chirag.emailclient.core.ui.components.TitleBar
 import codes.chirag.emailclient.features.commands.CommandPalette
+import codes.chirag.emailclient.features.commands.Cheatsheet
 
 @Composable
 fun App(
@@ -131,6 +132,7 @@ fun App(
                             val isQueueExpanded = state.activeEmailId == null
                             
                             EmailQueuePane(
+                                title = state.activeFolder.name.lowercase().replaceFirstChar { it.uppercase() },
                                 emails = displayedEmails,
                                 activeEmailId = state.activeEmailId,
                                 isExpanded = isQueueExpanded,
@@ -142,6 +144,9 @@ fun App(
                                     }
                                 },
                                 onComposeClicked = { state = state.copy(isComposing = true, activeEmailId = null) },
+                                onEmptyTrash = if (state.activeFolder == FolderType.TRASH) {
+                                    { state = state.copy(emails = state.emails.filter { it.folder != FolderType.TRASH }, activeEmailId = null) }
+                                } else null,
                                 modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
                             )
                             
@@ -151,6 +156,18 @@ fun App(
                                     email = selectedEmail,
                                     onComposeClicked = { state = state.copy(isComposing = true) },
                                     onCloseClicked = { state = state.copy(activeEmailId = null) },
+                                    onArchive = { id ->
+                                        val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.ARCHIVE) else it }
+                                        state = state.copy(emails = updated, activeEmailId = null)
+                                    },
+                                    onDelete = { id ->
+                                        val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.TRASH) else it }
+                                        state = state.copy(emails = updated, activeEmailId = null)
+                                    },
+                                    onRestore = { id ->
+                                        val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.INBOX) else it }
+                                        state = state.copy(emails = updated, activeEmailId = null)
+                                    },
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -171,6 +188,13 @@ fun App(
                         state = state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = "")
                     },
                     onDismiss = { state = state.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = "") }
+                )
+            }
+
+            // Cheatsheet Overlay
+            if (state.isCheatsheetVisible) {
+                Cheatsheet(
+                    onDismiss = { state = state.copy(isCheatsheetVisible = false) }
                 )
             }
         }
