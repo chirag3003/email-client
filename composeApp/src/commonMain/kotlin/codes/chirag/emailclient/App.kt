@@ -165,6 +165,14 @@ fun App(
                                 onClearSelection = {
                                     state = state.copy(selectedEmailIds = emptySet())
                                 },
+                                onArchiveEmail = { id ->
+                                    val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.ARCHIVE) else it }
+                                    state = state.copy(emails = updated, activeEmailId = null)
+                                },
+                                onDeleteEmail = { id ->
+                                    val updated = state.emails.map { if (it.internalId == id) it.copy(folder = FolderType.TRASH) else it }
+                                    state = state.copy(emails = updated, activeEmailId = null)
+                                },
                                 modifier = if (isQueueExpanded) Modifier.weight(1f) else Modifier.width(350.dp)
                             )
                             

@@ -21,6 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import codes.chirag.emailclient.core.domain.NormalizedEmail
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
@@ -38,6 +45,8 @@ fun EmailQueuePane(
     onEmptyTrash: (() -> Unit)? = null,
     onTrashSelection: (() -> Unit)? = null,
     onClearSelection: (() -> Unit)? = null,
+    onArchiveEmail: (String) -> Unit = {},
+    onDeleteEmail: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -165,7 +174,10 @@ fun EmailQueuePane(
                     isSelected = email.internalId == activeEmailId,
                     isMultiSelected = email.internalId in selectedEmailIds,
                     isExpanded = isExpanded,
-                    onClick = { onEmailSelected(email.internalId) }
+                    canShowHoverActions = activeEmailId == null && selectedEmailIds.isEmpty(),
+                    onClick = { onEmailSelected(email.internalId) },
+                    onArchive = { onArchiveEmail(email.internalId) },
+                    onDelete = { onDeleteEmail(email.internalId) }
                 )
             }
         }
@@ -194,17 +206,25 @@ fun EmailQueuePane(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EmailListItem(
     email: NormalizedEmail,
     isSelected: Boolean,
     isMultiSelected: Boolean,
     isExpanded: Boolean,
-    onClick: () -> Unit
+    canShowHoverActions: Boolean = false,
+    onClick: () -> Unit,
+    onArchive: () -> Unit = {},
+    onDelete: () -> Unit = {}
 ) {
+    var isHovered by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .onPointerEvent(PointerEventType.Enter) { isHovered = true }
+            .onPointerEvent(PointerEventType.Exit) { isHovered = false }
             .background(
                 when {
                     isMultiSelected -> EditorialColors.SurfaceSelected.copy(alpha = 0.5f)
@@ -284,6 +304,12 @@ private fun EmailListItem(
                         overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.width(16.dp))
+
+                    if (isHovered && canShowHoverActions) {
+                        HoverActions(onArchive = onArchive, onDelete = onDelete)
+                        Spacer(modifier = Modifier.width(16.dp))
+                    }
+
                     Text(
                         text = email.timestampStr,
                         style = AppTypography.labelMedium,
@@ -302,11 +328,16 @@ private fun EmailListItem(
                             style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                             color = EditorialColors.TextPrimary
                         )
-                        Text(
-                            text = email.timestampStr,
-                            style = AppTypography.labelMedium,
-                            color = EditorialColors.TextMuted
-                        )
+                        
+                        if (isHovered && canShowHoverActions) {
+                            HoverActions(onArchive = onArchive, onDelete = onDelete)
+                        } else {
+                            Text(
+                                text = email.timestampStr,
+                                style = AppTypography.labelMedium,
+                                color = EditorialColors.TextMuted
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -319,5 +350,43 @@ private fun EmailListItem(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun HoverActions(onArchive: () -> Unit, onDelete: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        HoverActionItem(icon = AppIcons.Archive, shortcut = "e", onClick = onArchive)
+        HoverActionItem(icon = AppIcons.Trash, shortcut = "d", onClick = onDelete)
+    }
+}
+
+@Composable
+private fun HoverActionItem(icon: androidx.compose.ui.graphics.vector.ImageVector, shortcut: String, onClick: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(RoundedCornerShape(4.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 4.dp, vertical = 2.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = EditorialColors.TextMuted,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = shortcut,
+            style = AppTypography.labelSmall,
+            color = EditorialColors.TextMuted,
+            modifier = Modifier
+                .border(1.dp, EditorialColors.Border, RoundedCornerShape(2.dp))
+                .padding(horizontal = 4.dp, vertical = 1.dp)
+        )
     }
 }
