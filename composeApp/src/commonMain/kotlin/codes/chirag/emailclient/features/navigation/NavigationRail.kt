@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import codes.chirag.emailclient.core.domain.FolderType
+import codes.chirag.emailclient.shared.model.FolderType
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
 

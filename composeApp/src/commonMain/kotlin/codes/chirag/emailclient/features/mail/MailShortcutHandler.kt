@@ -7,7 +7,7 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import codes.chirag.emailclient.core.domain.AppMode
-import codes.chirag.emailclient.core.domain.FolderType
+import codes.chirag.emailclient.shared.model.FolderType
 import codes.chirag.emailclient.core.domain.GlobalState
 import codes.chirag.emailclient.core.input.KeyResult
 import codes.chirag.emailclient.core.input.ShortcutHandler

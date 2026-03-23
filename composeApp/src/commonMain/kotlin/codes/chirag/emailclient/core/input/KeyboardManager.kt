@@ -5,7 +5,7 @@ import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
-import codes.chirag.emailclient.core.domain.FolderType
+import codes.chirag.emailclient.shared.model.FolderType
 import codes.chirag.emailclient.core.domain.GlobalState
 import codes.chirag.emailclient.features.commands.CommandShortcutHandler
 import codes.chirag.emailclient.features.compose.ComposeShortcutHandler

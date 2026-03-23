@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import codes.chirag.emailclient.core.domain.WorkspaceType
+import codes.chirag.emailclient.shared.model.WorkspaceType
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
 import codes.chirag.emailclient.core.ui.theme.AppTypography

@@ -1,5 +1,7 @@
 package codes.chirag.emailclient.core.domain
 
+import codes.chirag.emailclient.shared.model.*
+
 data class GlobalState(
     val currentMode: AppMode = AppMode.QUEUE_NAVIGATION,
     val activeWorkspace: WorkspaceType = WorkspaceType.GMAIL,

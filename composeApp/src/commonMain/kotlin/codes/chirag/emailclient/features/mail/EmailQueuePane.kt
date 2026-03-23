@@ -21,18 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.onPointerEvent
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import codes.chirag.emailclient.core.domain.NormalizedEmail
+import androidx.compose.ui.draw.clipToBounds
+import codes.chirag.emailclient.shared.model.NormalizedEmail
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
 import codes.chirag.emailclient.core.ui.theme.AppTypography
-import androidx.compose.ui.draw.clipToBounds
 @Composable
 fun EmailQueuePane(
     title: String,
@@ -207,7 +200,6 @@ fun EmailQueuePane(
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EmailListItem(
     email: NormalizedEmail,
@@ -219,14 +211,12 @@ private fun EmailListItem(
     onArchive: () -> Unit = {},
     onDelete: () -> Unit = {}
 ) {
-    var isHovered by remember { mutableStateOf(false) }
+    val isHovered = false // Disabled desktop-specific hover for cross-platform commonMain build
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clipToBounds()
-            .onPointerEvent(PointerEventType.Enter) { isHovered = true }
-            .onPointerEvent(PointerEventType.Exit) { isHovered = false }
             .background(
                 when {
                     isMultiSelected -> EditorialColors.SurfaceSelected.copy(alpha = 0.5f)

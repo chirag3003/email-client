@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import codes.chirag.emailclient.core.domain.NormalizedEmail
+import codes.chirag.emailclient.shared.model.NormalizedEmail
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
 import codes.chirag.emailclient.core.ui.theme.AppTypography
