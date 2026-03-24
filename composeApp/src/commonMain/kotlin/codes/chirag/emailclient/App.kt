@@ -84,10 +84,6 @@ fun App(
 
         val focusRequester = remember { FocusRequester() }
         
-        // State-driven focus restoration:
-        // Whenever we leave an overlay (Command Palette or Cheatsheet)
-        // or close a full-screen mode like Compose, ensure the root surface
-        // re-acquires focus for global keyboard shortcuts.
         LaunchedEffect(state.currentMode, state.isCheatsheetVisible, state.isComposing) {
             if (state.currentMode == AppMode.QUEUE_NAVIGATION && !state.isCheatsheetVisible && !state.isComposing) {
                 focusRequester.requestFocus()
