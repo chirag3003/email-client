@@ -12,7 +12,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.key.*
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,8 +37,21 @@ fun AuthScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    val focusManager = LocalFocusManager.current
+    val nameFocusRequester = remember { FocusRequester() }
+    val emailFocusRequester = remember { FocusRequester() }
+    val passwordFocusRequester = remember { FocusRequester() }
+
     val onAuthSubmit = {
         onAuthenticated(User(if (isSignIn) "User" else name, email, true))
+    }
+
+    LaunchedEffect(isSignIn) {
+        if (isSignIn) {
+            emailFocusRequester.requestFocus()
+        } else {
+            nameFocusRequester.requestFocus()
+        }
     }
 
     Box(
@@ -61,7 +79,11 @@ fun AuthScreen(
                     onValueChange = { name = it },
                     label = "Name",
                     imeAction = ImeAction.Next,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                    keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                        .focusRequester(nameFocusRequester)
                 )
             }
 
@@ -71,7 +93,11 @@ fun AuthScreen(
                 label = "Email",
                 imeAction = ImeAction.Next,
                 keyboardType = KeyboardType.Email,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .focusRequester(emailFocusRequester)
             )
 
             AuthTextField(
@@ -81,7 +107,10 @@ fun AuthScreen(
                 isPassword = true,
                 imeAction = ImeAction.Done,
                 keyboardActions = KeyboardActions(onDone = { onAuthSubmit() }),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp)
+                    .focusRequester(passwordFocusRequester)
             )
 
             Button(
@@ -122,6 +151,8 @@ fun AuthTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
+    
     Column(modifier = modifier) {
         Text(
             text = label.uppercase(),
@@ -144,6 +175,18 @@ fun AuthTextField(
                 .fillMaxWidth()
                 .background(EditorialColors.Background)
                 .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
+                .onPreviewKeyEvent { keyEvent ->
+                    if (keyEvent.key == Key.Tab && keyEvent.type == KeyEventType.KeyDown) {
+                        if (keyEvent.isShiftPressed) {
+                            focusManager.moveFocus(FocusDirection.Up)
+                        } else {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                        true
+                    } else {
+                        false
+                    }
+                }
                 .padding(12.dp),
             decorationBox = { innerTextField ->
                 Box {

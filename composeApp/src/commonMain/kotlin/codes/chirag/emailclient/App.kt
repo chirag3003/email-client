@@ -86,8 +86,11 @@ fun App(
 
         val focusRequester = remember { FocusRequester() }
         
-        LaunchedEffect(state.currentMode, state.isCheatsheetVisible, state.isComposing) {
-            if (state.currentMode == AppMode.QUEUE_NAVIGATION && !state.isCheatsheetVisible && !state.isComposing) {
+        LaunchedEffect(state.currentMode, state.isCheatsheetVisible, state.isComposing, state.currentUser) {
+            if (state.currentMode == AppMode.QUEUE_NAVIGATION && 
+                !state.isCheatsheetVisible && 
+                !state.isComposing && 
+                state.currentUser != null) {
                 focusRequester.requestFocus()
             }
         }
