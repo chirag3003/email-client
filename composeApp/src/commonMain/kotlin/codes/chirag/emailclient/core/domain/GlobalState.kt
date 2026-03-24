@@ -15,5 +15,7 @@ data class GlobalState(
     val commandQuery: String = "",
     val selectedCommandIndex: Int = 0,
     val isCheatsheetVisible: Boolean = false,
-    val selectedEmailIds: Set<String> = emptySet()
+    val isProfileMenuVisible: Boolean = false,
+    val selectedEmailIds: Set<String> = emptySet(),
+    val currentUser: User? = null
 )

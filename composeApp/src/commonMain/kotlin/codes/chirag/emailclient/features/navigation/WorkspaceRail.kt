@@ -22,6 +22,7 @@ import codes.chirag.emailclient.core.ui.theme.AppTypography
 fun WorkspaceRail(
     activeWorkspace: WorkspaceType,
     onWorkspaceSelected: (WorkspaceType) -> Unit,
+    onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -87,7 +88,7 @@ fun WorkspaceRail(
                 .size(40.dp)
                 .clip(CircleShape)
                 .background(EditorialColors.SurfaceSelected)
-                .clickable { /* Profile settings */ },
+                .clickable { onProfileClick() },
             contentAlignment = Alignment.Center
         ) {
             Icon(

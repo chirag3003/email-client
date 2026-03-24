@@ -27,6 +27,8 @@ import codes.chirag.emailclient.core.input.KeyboardManager
 import codes.chirag.emailclient.core.ui.components.TitleBar
 import codes.chirag.emailclient.features.commands.CommandPalette
 import codes.chirag.emailclient.features.commands.Cheatsheet
+import codes.chirag.emailclient.features.auth.AuthScreen
+import codes.chirag.emailclient.features.navigation.ProfileMenu
 
 @Composable
 fun App(
@@ -120,6 +122,9 @@ fun App(
                             activeWorkspace = state.activeWorkspace,
                             onWorkspaceSelected = { workspace ->
                                 state = state.copy(activeWorkspace = workspace)
+                            },
+                            onProfileClick = {
+                                state = state.copy(isProfileMenuVisible = !state.isProfileMenuVisible)
                             }
                         )
                         
@@ -223,6 +228,33 @@ fun App(
             if (state.isCheatsheetVisible) {
                 Cheatsheet(
                     onDismiss = { state = state.copy(isCheatsheetVisible = false) }
+                )
+            }
+
+            // Profile Menu Overlay
+            if (state.isProfileMenuVisible) {
+                ProfileMenu(
+                    user = state.currentUser,
+                    onLogout = {
+                        state = state.copy(
+                            currentUser = null, 
+                            currentMode = AppMode.AUTH_MODE,
+                            isProfileMenuVisible = false
+                        )
+                    },
+                    onDismiss = { state = state.copy(isProfileMenuVisible = false) }
+                )
+            }
+
+            // Auth Screen Overlay
+            if (state.currentUser == null || state.currentMode == AppMode.AUTH_MODE) {
+                AuthScreen(
+                    onAuthenticated = { user ->
+                        state = state.copy(
+                            currentUser = user,
+                            currentMode = AppMode.QUEUE_NAVIGATION
+                        )
+                    }
                 )
             }
         }
