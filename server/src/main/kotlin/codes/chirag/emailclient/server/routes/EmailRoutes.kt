@@ -4,8 +4,11 @@ import codes.chirag.emailclient.server.services.EmailService
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
-fun Route.emailRouting(emailService: EmailService) {
+fun Route.emailRouting() {
+    val emailService by inject<EmailService>()
+
     route("/emails") {
         get {
             val emails = emailService.getEmails()
