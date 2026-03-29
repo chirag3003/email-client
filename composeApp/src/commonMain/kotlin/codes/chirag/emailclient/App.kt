@@ -147,7 +147,7 @@ fun App(
                             )
                         } else {
                             val displayedEmails = state.emails.filter { it.folder == state.activeFolder }
-                            val isQueueExpanded = state.activeEmailId == null
+                            val isQueueExpanded = !state.showActiveEmail
 
                             EmailQueuePane(
                                 title = state.activeFolder.name.lowercase().replaceFirstChar { it.uppercase() },

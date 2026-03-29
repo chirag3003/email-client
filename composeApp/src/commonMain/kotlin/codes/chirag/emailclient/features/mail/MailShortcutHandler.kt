@@ -22,6 +22,13 @@ class MailShortcutHandler : ShortcutHandler {
         val displayedEmails = state.emails.filter { it.folder == state.activeFolder }
         
         return when (event.key) {
+            Key.Enter -> {
+               if(state.activeEmailId != null && !state.showActiveEmail){
+                   KeyResult.Handled(state.copy(showActiveEmail = true))
+               } else {
+                   KeyResult.Ignored
+               }
+            }
             Key.J -> {
                 val currentIndex = displayedEmails.indexOfFirst { it.internalId == state.activeEmailId }
                 val nextIndex = if (currentIndex < displayedEmails.size - 1) currentIndex + 1 else currentIndex
@@ -152,7 +159,7 @@ class MailShortcutHandler : ShortcutHandler {
                 if (state.selectedEmailIds.isNotEmpty()) {
                     KeyResult.Handled(state.copy(selectedEmailIds = emptySet()))
                 } else if (state.activeEmailId != null) {
-                    KeyResult.Handled(state.copy(activeEmailId = null))
+                    KeyResult.Handled(state.copy(showActiveEmail = false))
                 } else {
                     KeyResult.Ignored
                 }
