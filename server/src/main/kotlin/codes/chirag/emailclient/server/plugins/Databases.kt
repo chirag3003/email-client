@@ -1,6 +1,6 @@
 package codes.chirag.emailclient.server.plugins
 
-import codes.chirag.emailclient.server.db.EmailTable
+import codes.chirag.emailclient.server.db.UserTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -24,6 +24,6 @@ fun Application.configureDatabases() {
 
     // Automatically create tables for ease of setup
     transaction {
-        SchemaUtils.create(EmailTable)
+        SchemaUtils.create(UserTable)
     }
 }

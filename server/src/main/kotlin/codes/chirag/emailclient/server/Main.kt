@@ -3,6 +3,7 @@ package codes.chirag.emailclient.server
 import codes.chirag.emailclient.server.di.serverModule
 import codes.chirag.emailclient.server.plugins.configureDatabases
 import codes.chirag.emailclient.server.plugins.configureRouting
+import codes.chirag.emailclient.server.plugins.configureSecurity
 import codes.chirag.emailclient.server.plugins.configureSerialization
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -21,6 +22,7 @@ fun Application.module() {
         modules(serverModule)
     }
     configureSerialization()
+    configureSecurity()
     configureDatabases()
     configureRouting()
 }
