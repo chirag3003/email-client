@@ -1,48 +1,76 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+# Keyboard-First Email Client
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A hyper-focused, keyboard-driven desktop email client designed to eliminate UI bloat. It treats emails as tasks to be triaged quickly, supporting multi-account management (Gmail & Zoho) without merging them into a confusing unified inbox.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## 🚀 Product Vision
 
-### Build and Run Android Application
+- **Minimalist Design**: Ultra-minimalist, typography-centric, high-contrast dark theme. Zero floating action buttons or toolbars.
+- **Vim-Inspired Navigation**: Movement and triage are handled entirely via the keyboard, keeping your hands on the home row.
+- **Offline-First**: Local caching via SQLDelight ensures zero-latency interactions.
+- **Multi-Account**: Context switching between workspaces (Gmail, Work, Personal) is seamless.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## 🏗️ Project Architecture
 
-### Build and Run Desktop (JVM) Application
+This is a **Kotlin Multiplatform (KMP)** project targeting Android, iOS, Desktop (JVM), and a synchronization backend.
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+### Modules
+- **`composeApp`**: Shared UI code using **Compose Multiplatform**.
+    - `commonMain`: Shared UI and logic for all platforms.
+    - `jvmMain`: Desktop-specific implementation.
+    - `androidMain`: Android-specific implementation.
+    - `iosMain`: iOS-specific entry points.
+- **`shared`**: Shared data models and business logic (e.g., `NormalizedEmail`).
+- **`server`**: A **Ktor**-based synchronization engine that polls third-party APIs (Gmail/Zoho), normalizes data, and serves it to the client.
+- **`iosApp`**: The iOS application entry point (SwiftUI).
 
-### Build and Run iOS Application
+## ⌨️ Keyboard Navigation Paradigm
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+The application relies on strict UI focus management to intercept keystrokes without requiring a mouse.
+
+### Movement & Triage
+- **j / k**: Move Down / Up in the queue.
+- **Enter / l**: Open selected email.
+- **Esc / h**: Return to the Queue.
+- **e**: Archive / Done (auto-advances).
+- **d**: Trash / Delete (auto-advances).
+- **s**: Snooze / Defer (auto-advances).
+
+### Composing & Global Actions
+- **c**: New Message.
+- **r**: Reply.
+- **a**: Reply All.
+- **Ctrl + Enter**: Send.
+- **Ctrl + K**: Open **Command Palette** (Settings, secondary actions).
+- **Ctrl + 1/2/3**: Switch Workspaces.
+- **?**: Shortcut Cheat Sheet.
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Compose Multiplatform, Kotlin Coroutines, StateFlow.
+- **Backend**: Ktor, Koin (DI), SQLDelight/PostgreSQL.
+- **Data**: Normalized internal schema for cross-provider compatibility.
+- **Security**: OAuth 2.0 flows, OS-native credential management.
+
+## 🚀 Build and Run
+
+### Desktop (JVM)
+```shell
+./gradlew :composeApp:run
+```
+
+### Server (Synchronization Engine)
+```shell
+./gradlew :server:run
+```
+
+### Android
+```shell
+./gradlew :composeApp:assembleDebug
+```
+
+### iOS
+1. Open the `/iosApp` directory in Xcode.
+2. Build and run from Xcode.
 
 ---
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html).
