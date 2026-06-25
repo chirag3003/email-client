@@ -80,6 +80,10 @@ fun App(
                     selectedCommand?.action?.invoke()
                     
                     currentState.copy(currentMode = AppMode.QUEUE_NAVIGATION, commandQuery = "")
+                },
+                getFilteredCommandCount = { currentState ->
+                    if (currentState.commandQuery.isEmpty()) commands.size
+                    else commands.count { it.label.contains(currentState.commandQuery, ignoreCase = true) }
                 }
             )
         }

@@ -9,20 +9,21 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureDatabases() {
-    val config = HikariConfig().apply {
+    val config = environment.config
+
+    val hikariConfig = HikariConfig().apply {
         driverClassName = "org.postgresql.Driver"
-        jdbcUrl = "jdbc:postgresql://localhost:5432/emailclient" // Adjust based on your environment
-        username = "postgres"
-        password = "password" // Adjust based on your environment
-        maximumPoolSize = 3
+        jdbcUrl = config.property("database.jdbcUrl").getString()
+        username = config.property("database.username").getString()
+        password = config.property("database.password").getString()
+        maximumPoolSize = config.property("database.maximumPoolSize").getString().toInt()
         isAutoCommit = false
         transactionIsolation = "TRANSACTION_REPEATABLE_READ"
         validate()
     }
-    val dataSource = HikariDataSource(config)
+    val dataSource = HikariDataSource(hikariConfig)
     Database.connect(dataSource)
 
-    // Automatically create tables for ease of setup
     transaction {
         SchemaUtils.create(UserTable)
     }

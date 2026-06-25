@@ -19,6 +19,7 @@ data class NormalizedEmail(
     val folder: FolderType,
     val senderName: String,
     val senderEmail: String,
+    val recipientEmail: String? = null,
     val subject: String,
     val snippet: String,
     val bodyText: String,

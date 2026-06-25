@@ -7,7 +7,8 @@ import codes.chirag.emailclient.core.input.KeyResult
 import codes.chirag.emailclient.core.input.ShortcutHandler
 
 class CommandShortcutHandler(
-    private val onExecuteCommand: (GlobalState) -> GlobalState
+    private val onExecuteCommand: (GlobalState) -> GlobalState,
+    private val getFilteredCommandCount: (GlobalState) -> Int = { Int.MAX_VALUE }
 ) : ShortcutHandler {
     override fun handle(event: KeyEvent, state: GlobalState): KeyResult {
         // Global trigger for Ctrl+K
@@ -37,7 +38,8 @@ class CommandShortcutHandler(
 
         return when (event.key) {
             Key.DirectionDown -> {
-                KeyResult.Handled(state.copy(selectedCommandIndex = state.selectedCommandIndex + 1))
+                val maxIndex = (getFilteredCommandCount(state) - 1).coerceAtLeast(0)
+                KeyResult.Handled(state.copy(selectedCommandIndex = (state.selectedCommandIndex + 1).coerceAtMost(maxIndex)))
             }
             Key.DirectionUp -> {
                 KeyResult.Handled(state.copy(selectedCommandIndex = (state.selectedCommandIndex - 1).coerceAtLeast(0)))

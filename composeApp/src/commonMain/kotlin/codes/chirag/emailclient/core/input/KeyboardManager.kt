@@ -30,9 +30,10 @@ interface ShortcutHandler {
  * Orchestrates keyboard shortcuts across different features based on app state.
  */
 class KeyboardManager(
-    private val onExecuteCommand: (GlobalState) -> GlobalState
+    private val onExecuteCommand: (GlobalState) -> GlobalState,
+    private val getFilteredCommandCount: (GlobalState) -> Int = { Int.MAX_VALUE }
 ) {
-    private val commandHandler = CommandShortcutHandler(onExecuteCommand)
+    private val commandHandler = CommandShortcutHandler(onExecuteCommand, getFilteredCommandCount)
     private val mailHandler = MailShortcutHandler()
     private val composeHandler = ComposeShortcutHandler()
 

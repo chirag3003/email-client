@@ -83,6 +83,12 @@ fun EmailDetailPane(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+
+                Text("esc", style = AppTypography.labelSmall, modifier = shortcutModifier())
+                Text("Close", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+
+                Spacer(modifier = Modifier.width(8.dp))
+
                 if (email?.folder == FolderType.TRASH) {
                     Text("r", style = AppTypography.labelSmall, modifier = shortcutModifier())
                     Text("restore", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
@@ -171,7 +177,7 @@ fun EmailDetailPane(
                                 )
                             }
                             Text(
-                                text = "to me",
+                                text = "to ${email.recipientEmail ?: "me"}",
                                 color = EditorialColors.TextMuted,
                                 style = AppTypography.labelMedium
                             )
@@ -179,7 +185,7 @@ fun EmailDetailPane(
                     }
                     
                     Text(
-                        text = "${email.timestampStr}, ${email.timestampStr}", // Temporary fallback
+                        text = email.timestampStr,
                         color = EditorialColors.TextMuted,
                         style = AppTypography.labelMedium
                     )

@@ -1,5 +1,9 @@
 package codes.chirag.emailclient.server.routes
 
+import codes.chirag.emailclient.server.jwtAudience
+import codes.chirag.emailclient.server.jwtDomain
+import codes.chirag.emailclient.server.jwtExpiryMillis
+import codes.chirag.emailclient.server.jwtSecret
 import codes.chirag.emailclient.server.services.AuthService
 import codes.chirag.emailclient.shared.model.User
 import com.auth0.jwt.JWT
@@ -25,16 +29,18 @@ data class SignupRequest(val name: String, val email: String, val passwordHash: 
 
 fun Route.authRouting() {
     val authService by inject<AuthService>()
+    val config = application.environment.config
 
-    val jwtAudience = "http://0.0.0.0:8080/hello"
-    val jwtDomain = "https://jwt-provider-domain/"
-    val jwtSecret = "secret"
+    val jwtAudience = config.jwtAudience()
+    val jwtDomain = config.jwtDomain()
+    val jwtSecret = config.jwtSecret()
+    val jwtExpiryMillis = config.jwtExpiryMillis()
 
     fun generateToken(email: String): String = JWT.create()
         .withAudience(jwtAudience)
         .withIssuer(jwtDomain)
         .withClaim("email", email)
-        .withExpiresAt(Date(System.currentTimeMillis() + 3600000))
+        .withExpiresAt(Date(System.currentTimeMillis() + jwtExpiryMillis))
         .sign(Algorithm.HMAC256(jwtSecret))
 
     post("/signup") {
