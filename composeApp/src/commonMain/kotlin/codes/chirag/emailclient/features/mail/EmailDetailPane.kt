@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,7 +21,7 @@ import codes.chirag.emailclient.shared.model.FolderType
 import codes.chirag.emailclient.shared.model.NormalizedEmail
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
-import codes.chirag.emailclient.core.ui.theme.AppTypography
+import codes.chirag.emailclient.core.ui.theme.focusRing
 
 @Composable
 fun EmailDetailPane(
@@ -52,75 +53,86 @@ fun EmailDetailPane(
                     imageVector = AppIcons.Close,
                     contentDescription = "Close",
                     tint = EditorialColors.TextMuted,
-                    modifier = Modifier.size(20.dp).clickable { onCloseClicked() }
+                    modifier = Modifier
+                        .size(20.dp)
+                        .focusRing()
+                        .clickable { onCloseClicked() }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 if (email?.folder == FolderType.TRASH) {
                     Icon(
                         imageVector = AppIcons.Inbox,
                         contentDescription = "Restore",
                         tint = EditorialColors.TextMuted,
-                        modifier = Modifier.size(20.dp).clickable { email?.let { onRestore(it.internalId) } }
+                        modifier = Modifier
+                            .size(20.dp)
+                            .focusRing()
+                            .clickable { email?.let { onRestore(it.internalId) } }
                     )
                 } else {
                     Icon(
                         imageVector = AppIcons.Archive,
                         contentDescription = "Archive",
                         tint = EditorialColors.TextMuted,
-                        modifier = Modifier.size(20.dp).clickable { email?.let { onArchive(it.internalId) } }
+                        modifier = Modifier
+                            .size(20.dp)
+                            .focusRing()
+                            .clickable { email?.let { onArchive(it.internalId) } }
                     )
                     Icon(
                         imageVector = AppIcons.Trash,
                         contentDescription = "Trash",
                         tint = EditorialColors.TextMuted,
-                        modifier = Modifier.size(20.dp).clickable { email?.let { onDelete(it.internalId) } }
+                        modifier = Modifier
+                            .size(20.dp)
+                            .focusRing()
+                            .clickable { email?.let { onDelete(it.internalId) } }
                     )
                 }
             }
-            
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-
-                Text("esc", style = AppTypography.labelSmall, modifier = shortcutModifier())
-                Text("Close", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                Text("esc", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                Text("Close", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 if (email?.folder == FolderType.TRASH) {
-                    Text("r", style = AppTypography.labelSmall, modifier = shortcutModifier())
-                    Text("restore", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    Text("r", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                    Text("restore", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                 } else {
-                    Text("e", style = AppTypography.labelSmall, modifier = shortcutModifier())
-                    Text("archive", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
-                    
-                    Text("d", style = AppTypography.labelSmall, modifier = shortcutModifier())
-                    Text("delete", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    Text("e", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                    Text("archive", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
+
+                    Text("d", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                    Text("delete", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                 }
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
-                
-                Text("k", style = AppTypography.labelSmall, modifier = shortcutModifier())
-                Text("up", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
-                
-                Text("j", style = AppTypography.labelSmall, modifier = shortcutModifier())
-                Text("down", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
-                
+
+                Text("k", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                Text("up", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
+
+                Text("j", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                Text("down", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .clickable { onComposeClicked() }
                         .padding(4.dp)
                 ) {
-                    Text("c", style = AppTypography.labelSmall, modifier = shortcutModifier())
+                    Text("c", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("compose", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    Text("compose", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
-        
+
         HorizontalDivider(color = EditorialColors.Border, thickness = 1.dp)
 
         // Email Content
@@ -132,12 +144,12 @@ fun EmailDetailPane(
             ) {
                 Text(
                     text = email.subject,
-                    style = AppTypography.bodyLarge.copy(fontSize = 32.sp, fontWeight = FontWeight.SemiBold),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 32.sp, fontWeight = FontWeight.SemiBold),
                     color = EditorialColors.TextPrimary
                 )
-                
+
                 Spacer(modifier = Modifier.height(32.dp))
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -156,49 +168,49 @@ fun EmailDetailPane(
                             Text(
                                 text = email.senderName.take(2).uppercase(),
                                 color = EditorialColors.TextPrimary,
-                                style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                             )
                         }
-                        
+
                         Spacer(modifier = Modifier.width(16.dp))
-                        
+
                         Column {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = email.senderName,
                                     color = EditorialColors.TextPrimary,
-                                    style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = "<${email.senderEmail}>",
-                                    color = EditorialColors.TextMuted,
-                                    style = AppTypography.bodyLarge
+                                    color = EditorialColors.TextSecondary,
+                                    style = MaterialTheme.typography.bodyLarge
                                 )
                             }
                             Text(
                                 text = "to ${email.recipientEmail ?: "me"}",
                                 color = EditorialColors.TextMuted,
-                                style = AppTypography.labelMedium
+                                style = MaterialTheme.typography.labelMedium
                             )
                         }
                     }
-                    
+
                     Text(
                         text = email.timestampStr,
                         color = EditorialColors.TextMuted,
-                        style = AppTypography.labelMedium
+                        style = MaterialTheme.typography.labelMedium
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(32.dp))
                 HorizontalDivider(color = EditorialColors.Border, thickness = 1.dp)
                 Spacer(modifier = Modifier.height(32.dp))
-                
+
                 // Email Body text
                 Text(
                     text = email.bodyText,
-                    style = AppTypography.bodyMedium.copy(lineHeight = 28.sp, fontSize = 16.sp),
+                    style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 28.sp, fontSize = 16.sp),
                     color = EditorialColors.TextPrimary
                 )
             }
@@ -207,7 +219,7 @@ fun EmailDetailPane(
                 Text(
                     text = "No email selected",
                     color = EditorialColors.TextMuted,
-                    style = AppTypography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }

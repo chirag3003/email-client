@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.MaterialTheme
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
-import codes.chirag.emailclient.core.ui.theme.AppTypography
 
 @Composable
 fun TitleBar(
@@ -34,7 +34,7 @@ fun TitleBar(
             
             Text(
                 text = "Email Client",
-                style = AppTypography.labelSmall,
+                style = MaterialTheme.typography.labelSmall,
                 color = EditorialColors.TextMuted
             )
             
@@ -78,7 +78,7 @@ private fun WindowControlSymbol(
     ) {
         Text(
             text = symbol,
-            style = AppTypography.labelSmall,
+            style = MaterialTheme.typography.labelSmall,
             color = if (isClose) EditorialColors.Error else EditorialColors.TextMuted
         )
     }

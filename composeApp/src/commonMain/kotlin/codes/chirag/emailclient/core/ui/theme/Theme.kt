@@ -8,10 +8,15 @@ private val DarkColorScheme = darkColorScheme(
     primary = EditorialColors.Primary,
     background = EditorialColors.Background,
     surface = EditorialColors.Surface,
-    onPrimary = EditorialColors.TextPrimary,
+    surfaceVariant = EditorialColors.SurfaceSelected,
+    surfaceTint = EditorialColors.SurfaceElevated,
+    onPrimary = EditorialColors.Background,
     onBackground = EditorialColors.TextPrimary,
     onSurface = EditorialColors.TextPrimary,
-    error = EditorialColors.Error
+    onSurfaceVariant = EditorialColors.TextSecondary,
+    error = EditorialColors.Error,
+    outline = EditorialColors.Border,
+    outlineVariant = EditorialColors.Border
 )
 
 @Composable
@@ -20,7 +25,7 @@ fun AppTheme(
 ) {
     MaterialTheme(
         colorScheme = DarkColorScheme,
-        typography = AppTypography,
+        typography = AppTypography(),
         content = content
     )
 }

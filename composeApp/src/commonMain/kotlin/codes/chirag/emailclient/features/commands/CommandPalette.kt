@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -20,8 +22,8 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import codes.chirag.emailclient.core.domain.Command
-import codes.chirag.emailclient.core.ui.theme.AppTypography
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
+import codes.chirag.emailclient.core.ui.theme.focusRing
 
 @Composable
 fun CommandPalette(
@@ -33,7 +35,7 @@ fun CommandPalette(
     onDismiss: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-    
+
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -49,9 +51,9 @@ fun CommandPalette(
             modifier = Modifier
                 .padding(top = 100.dp)
                 .width(600.dp)
-                .clickable(enabled = false) {}, // Prevent clicks from dismissing
+                .clickable(enabled = false) {},
             shape = RoundedCornerShape(8.dp),
-            color = EditorialColors.Surface,
+            color = EditorialColors.SurfaceElevated,
             border = androidx.compose.foundation.BorderStroke(1.dp, EditorialColors.Border)
         ) {
             Column {
@@ -65,14 +67,14 @@ fun CommandPalette(
                     if (query.isEmpty()) {
                         Text(
                             text = "Type a command...",
-                            style = AppTypography.bodyLarge,
+                            style = MaterialTheme.typography.bodyLarge,
                             color = EditorialColors.TextMuted
                         )
                     }
                     BasicTextField(
                         value = query,
                         onValueChange = onQueryChange,
-                        textStyle = AppTypography.bodyLarge.copy(color = EditorialColors.TextPrimary),
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(color = EditorialColors.TextPrimary),
                         cursorBrush = SolidColor(EditorialColors.Primary),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -90,8 +92,8 @@ fun CommandPalette(
                 }
 
                 if (commands.isNotEmpty()) {
-                    androidx.compose.material3.HorizontalDivider(color = EditorialColors.Border)
-                    
+                    HorizontalDivider(color = EditorialColors.Border)
+
                     LazyColumn(
                         modifier = Modifier.heightIn(max = 400.dp)
                     ) {
@@ -118,7 +120,8 @@ private fun CommandItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(if (isSelected) EditorialColors.SurfaceSelected else EditorialColors.Surface)
+            .background(if (isSelected) EditorialColors.SurfaceSelected else EditorialColors.SurfaceElevated)
+            .focusRing()
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -126,14 +129,14 @@ private fun CommandItem(
     ) {
         Text(
             text = command.label,
-            style = AppTypography.bodyLarge,
+            style = MaterialTheme.typography.bodyLarge,
             color = if (isSelected) EditorialColors.Primary else EditorialColors.TextPrimary
         )
-        
+
         if (command.shortcut != null) {
             Text(
                 text = command.shortcut,
-                style = AppTypography.labelSmall,
+                style = MaterialTheme.typography.labelSmall,
                 color = EditorialColors.TextMuted,
                 modifier = Modifier
                     .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))

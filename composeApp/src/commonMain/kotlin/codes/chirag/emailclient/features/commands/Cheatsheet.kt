@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import codes.chirag.emailclient.core.ui.theme.AppTypography
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
 
 data class ShortcutInfo(val label: String, val keys: String)
@@ -55,18 +55,18 @@ fun Cheatsheet(
                 .width(700.dp)
                 .clickable(enabled = false) {},
             shape = RoundedCornerShape(12.dp),
-            color = EditorialColors.Surface,
+            color = EditorialColors.SurfaceElevated,
             border = androidx.compose.foundation.BorderStroke(1.dp, EditorialColors.Border)
         ) {
             Column(modifier = Modifier.padding(32.dp)) {
                 Text(
                     text = "Keyboard Shortcuts",
-                    style = AppTypography.bodyLarge.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold),
                     color = EditorialColors.TextPrimary
                 )
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
                     Column(modifier = Modifier.weight(1f).border(1.dp, EditorialColors.Border)) {
                         ShortcutTableHeader("Navigation")
@@ -78,12 +78,12 @@ fun Cheatsheet(
                         actionShortcuts.forEach { ShortcutTableRow(it) }
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(32.dp))
-                
+
                 Text(
                     text = "Press Esc to close",
-                    style = AppTypography.labelSmall,
+                    style = MaterialTheme.typography.labelSmall,
                     color = EditorialColors.TextMuted,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
@@ -102,7 +102,7 @@ private fun ShortcutTableHeader(title: String) {
     ) {
         Text(
             text = title.uppercase(),
-            style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
             color = EditorialColors.TextMuted
         )
     }
@@ -119,13 +119,13 @@ private fun ShortcutTableRow(shortcut: ShortcutInfo) {
     ) {
         Text(
             text = shortcut.label,
-            style = AppTypography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium,
             color = EditorialColors.TextPrimary,
             modifier = Modifier.weight(1f)
         )
         Text(
             text = shortcut.keys,
-            style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
             color = EditorialColors.Primary,
             modifier = Modifier
                 .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))

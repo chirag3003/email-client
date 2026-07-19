@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
-import codes.chirag.emailclient.core.ui.theme.AppTypography
+import codes.chirag.emailclient.core.ui.theme.focusRing
 import codes.chirag.emailclient.shared.model.User
 
 @Composable
@@ -68,7 +68,7 @@ fun AuthScreen(
         ) {
             Text(
                 text = if (isSignIn) "Sign In" else "Create Account",
-                style = AppTypography.headlineSmall,
+                style = MaterialTheme.typography.headlineSmall,
                 color = EditorialColors.TextPrimary,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
@@ -115,7 +115,10 @@ fun AuthScreen(
 
             Button(
                 onClick = onAuthSubmit,
-                modifier = Modifier.fillMaxWidth().height(48.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .focusRing(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = EditorialColors.Primary,
                     contentColor = EditorialColors.Background
@@ -124,7 +127,7 @@ fun AuthScreen(
             ) {
                 Text(
                     text = if (isSignIn) "Sign In" else "Sign Up",
-                    style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }
 
@@ -132,9 +135,11 @@ fun AuthScreen(
 
             Text(
                 text = if (isSignIn) "Need an account? Sign Up" else "Already have an account? Sign In",
-                style = AppTypography.bodyMedium.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif),
+                style = MaterialTheme.typography.bodyMedium,
                 color = EditorialColors.TextMuted,
-                modifier = Modifier.clickable { isSignIn = !isSignIn }
+                modifier = Modifier
+                    .focusRing()
+                    .clickable { isSignIn = !isSignIn }
             )
         }
     }
@@ -152,18 +157,18 @@ fun AuthTextField(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
-    
+
     Column(modifier = modifier) {
         Text(
             text = label.uppercase(),
-            style = AppTypography.labelSmall,
+            style = MaterialTheme.typography.labelSmall,
             color = EditorialColors.TextMuted,
             modifier = Modifier.padding(bottom = 8.dp)
         )
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
-            textStyle = AppTypography.bodyLarge.copy(color = EditorialColors.TextPrimary),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(color = EditorialColors.TextPrimary),
             visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
             cursorBrush = SolidColor(EditorialColors.Primary),
             keyboardOptions = KeyboardOptions(
@@ -173,7 +178,7 @@ fun AuthTextField(
             keyboardActions = keyboardActions,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(EditorialColors.Background)
+                .background(EditorialColors.Surface)
                 .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
                 .onPreviewKeyEvent { keyEvent ->
                     if (keyEvent.key == Key.Tab && keyEvent.type == KeyEventType.KeyDown) {
@@ -193,7 +198,7 @@ fun AuthTextField(
                     if (value.isEmpty()) {
                         Text(
                             text = "Enter $label",
-                            style = AppTypography.bodyLarge,
+                            style = MaterialTheme.typography.bodyLarge,
                             color = EditorialColors.TextMuted.copy(alpha = 0.5f)
                         )
                     }

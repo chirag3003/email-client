@@ -3,11 +3,15 @@ package codes.chirag.emailclient.features.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import codes.chirag.emailclient.shared.model.WorkspaceType
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
-import codes.chirag.emailclient.core.ui.theme.AppTypography
+import codes.chirag.emailclient.core.ui.theme.focusRing
 
 @Composable
 fun WorkspaceRail(
@@ -52,53 +56,17 @@ fun WorkspaceRail(
             onClick = { onWorkspaceSelected(WorkspaceType.PERSONAL) }
         )
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Add new workspace
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(EditorialColors.SurfaceSelected)
-                .clickable { /* TODO */ },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = AppIcons.AddWorkspace,
-                contentDescription = "Add Workspace",
-                tint = EditorialColors.TextMuted,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-        
+        AddWorkspaceButton()
+
         Spacer(modifier = Modifier.weight(1f))
 
         // Settings
-        Icon(
-            imageVector = AppIcons.Settings,
-            contentDescription = "Settings",
-            tint = EditorialColors.TextMuted,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable { /* TODO */ }
-        )
+        SettingsButton()
         Spacer(modifier = Modifier.height(32.dp))
         // Profile Avatar
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(EditorialColors.SurfaceSelected)
-                .clickable { onProfileClick() },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = AppIcons.Profile,
-                contentDescription = "Profile",
-                tint = EditorialColors.TextMuted,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
+        ProfileButton(onProfileClick = onProfileClick)
     }
 }
 
@@ -108,11 +76,22 @@ private fun WorkspaceItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+
+    val backgroundColor = when {
+        isSelected -> EditorialColors.SurfaceSelected
+        isHovered -> EditorialColors.SurfaceHover
+        else -> EditorialColors.Background
+    }
+
     Box(
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .background(if (isSelected) EditorialColors.SurfaceSelected else EditorialColors.Background)
+            .background(backgroundColor)
+            .hoverable(interactionSource)
+            .focusRing()
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -126,15 +105,87 @@ private fun WorkspaceItem(
             )
             Text(
                 text = text,
-                style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                 color = EditorialColors.Primary
             )
         } else {
             Text(
                 text = text,
-                style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                color = EditorialColors.TextMuted
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                color = if (isHovered) EditorialColors.TextPrimary else EditorialColors.TextMuted
             )
         }
+    }
+}
+
+@Composable
+private fun AddWorkspaceButton() {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(if (isHovered) EditorialColors.SurfaceHover else EditorialColors.SurfaceSelected)
+            .hoverable(interactionSource)
+            .focusRing()
+            .clickable { /* TODO */ },
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = AppIcons.AddWorkspace,
+            contentDescription = "Add Workspace",
+            tint = EditorialColors.TextMuted,
+            modifier = Modifier.size(20.dp)
+        )
+    }
+}
+
+@Composable
+private fun SettingsButton() {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(if (isHovered) EditorialColors.SurfaceHover else EditorialColors.Background)
+            .hoverable(interactionSource)
+            .focusRing()
+            .clickable { /* TODO */ },
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = AppIcons.Settings,
+            contentDescription = "Settings",
+            tint = if (isHovered) EditorialColors.TextPrimary else EditorialColors.TextMuted,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+
+@Composable
+private fun ProfileButton(onProfileClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(if (isHovered) EditorialColors.SurfaceHover else EditorialColors.SurfaceSelected)
+            .hoverable(interactionSource)
+            .focusRing()
+            .clickable { onProfileClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = AppIcons.Profile,
+            contentDescription = "Profile",
+            tint = if (isHovered) EditorialColors.TextPrimary else EditorialColors.TextMuted,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }

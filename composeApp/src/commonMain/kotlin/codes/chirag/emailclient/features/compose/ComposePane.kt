@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import codes.chirag.emailclient.shared.model.NormalizedEmail
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
-import codes.chirag.emailclient.core.ui.theme.AppTypography
+import codes.chirag.emailclient.core.ui.theme.focusRing
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
@@ -53,6 +54,7 @@ fun ComposePane(
                 tint = EditorialColors.TextMuted,
                 modifier = Modifier
                     .size(20.dp)
+                    .focusRing()
                     .clickable { onClose() }
             )
         }
@@ -67,30 +69,30 @@ fun ComposePane(
         ) {
             ComposeField(label = "TO", value = toText, onValueChange = { toText = it })
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             ComposeField(label = "CC", value = ccText, onValueChange = { ccText = it })
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             ComposeField(label = "BCC", value = bccText, onValueChange = { bccText = it })
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             ComposeField(label = "SUBJECT", value = subjectText, onValueChange = { subjectText = it })
-            
+
             Spacer(modifier = Modifier.height(48.dp))
-            
+
             // Body Text
             Box(modifier = Modifier.weight(1f)) {
                 if (bodyText.isEmpty()) {
                     Text(
                         text = "Start typing your message here...",
-                        style = AppTypography.bodyLarge.copy(fontSize = 18.sp),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
                         color = EditorialColors.TextMuted
                     )
                 }
                 BasicTextField(
                     value = bodyText,
                     onValueChange = { bodyText = it },
-                    textStyle = AppTypography.bodyMedium.copy(
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
                         color = EditorialColors.TextPrimary,
                         fontSize = 18.sp,
                         lineHeight = 28.sp
@@ -115,7 +117,7 @@ fun ComposePane(
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 FormattingShortcut("B", "Cmd + B")
                 FormattingShortcut("I", "Cmd + I", isItalic = true)
-                FormattingShortcut("🔗", "Cmd + K") // Placeholder for link icon
+                FormattingShortcut("Link", "Cmd + K")
             }
 
             // Right Actions
@@ -124,13 +126,17 @@ fun ComposePane(
                     imageVector = AppIcons.Trash,
                     contentDescription = "Discard Draft",
                     tint = EditorialColors.TextMuted,
-                    modifier = Modifier.size(20.dp).clickable { onClose() }
+                    modifier = Modifier
+                        .size(20.dp)
+                        .focusRing()
+                        .clickable { onClose() }
                 )
-                
+
                 // Send Button Combo
                 Row(
                     modifier = Modifier
                         .height(36.dp)
+                        .focusRing()
                         .background(EditorialColors.Primary, androidx.compose.ui.graphics.RectangleShape)
                         .clickable { onClose() } // In a real app this would trigger send
                 ) {
@@ -143,7 +149,7 @@ fun ComposePane(
                         Text(
                             text = "Send",
                             color = EditorialColors.Background,
-                            style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     }
                     Box(
@@ -161,7 +167,7 @@ fun ComposePane(
                         Text(
                             text = "Cmd+Enter",
                             color = EditorialColors.Background.copy(alpha = 0.8f),
-                            style = AppTypography.labelSmall
+                            style = MaterialTheme.typography.labelSmall
                         )
                     }
                 }
@@ -180,13 +186,13 @@ private fun ComposeField(
         Text(
             text = label,
             color = EditorialColors.TextMuted,
-            style = AppTypography.labelMedium.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.width(80.dp)
         )
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
-            textStyle = AppTypography.bodyLarge.copy(color = EditorialColors.TextPrimary),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(color = EditorialColors.TextPrimary),
             cursorBrush = SolidColor(EditorialColors.Primary),
             modifier = Modifier.weight(1f)
         )
@@ -199,12 +205,12 @@ private fun FormattingShortcut(icon: String, shortcut: String, isItalic: Boolean
         Text(
             text = icon,
             color = EditorialColors.TextMuted,
-            style = AppTypography.bodyLarge.copy(
+            style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Bold,
                 fontStyle = if (isItalic) androidx.compose.ui.text.font.FontStyle.Italic else null
             )
         )
-        
+
         // Render Cmd + X pills
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
             val parts = shortcut.split(" + ")
@@ -212,13 +218,13 @@ private fun FormattingShortcut(icon: String, shortcut: String, isItalic: Boolean
                 Text(
                     text = part,
                     color = EditorialColors.TextMuted,
-                    style = AppTypography.labelSmall,
+                    style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier
                         .background(EditorialColors.SurfaceSelected, RoundedCornerShape(4.dp))
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 )
                 if (index < parts.size - 1) {
-                    Text("+", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                    Text("+", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                 }
             }
         }

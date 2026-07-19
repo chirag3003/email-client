@@ -3,6 +3,9 @@ package codes.chirag.emailclient.features.mail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,8 +13,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +29,8 @@ import androidx.compose.ui.draw.clipToBounds
 import codes.chirag.emailclient.shared.model.NormalizedEmail
 import codes.chirag.emailclient.core.ui.AppIcons
 import codes.chirag.emailclient.core.ui.theme.EditorialColors
-import codes.chirag.emailclient.core.ui.theme.AppTypography
+import codes.chirag.emailclient.core.ui.theme.focusRing
+
 @Composable
 fun EmailQueuePane(
     title: String,
@@ -64,11 +69,11 @@ fun EmailQueuePane(
                 ) {
                     Text(
                         text = "${selectedEmailIds.size} Selected",
-                        style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         color = EditorialColors.Primary
                     )
                     Spacer(modifier = Modifier.width(24.dp))
-                    
+
                     // Trash Selection Button
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -77,18 +82,18 @@ fun EmailQueuePane(
                             .padding(4.dp)
                     ) {
                         Text(
-                            text = "d", 
-                            style = AppTypography.labelSmall, 
+                            text = "d",
+                            style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier
                                 .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("trash", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                        Text("trash", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                     }
-                    
+
                     Spacer(modifier = Modifier.width(16.dp))
-                    
+
                     // Clear Selection Button
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -97,25 +102,25 @@ fun EmailQueuePane(
                             .padding(4.dp)
                     ) {
                         Text(
-                            text = "esc", 
-                            style = AppTypography.labelSmall, 
+                            text = "esc",
+                            style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier
                                 .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("clear", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                        Text("clear", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                     }
                 }
             } else {
                 // Normal Mode Top Bar
                 Text(
                     text = title,
-                    style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                     color = EditorialColors.TextPrimary,
                     modifier = Modifier.weight(1f)
                 )
-                
+
                 if (onEmptyTrash != null && emails.isNotEmpty()) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -130,11 +135,11 @@ fun EmailQueuePane(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Empty Trash", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                        Text("Empty Trash", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                 }
-                
+
                 if (isExpanded) {
                     Spacer(modifier = Modifier.width(16.dp))
                     Row(
@@ -144,19 +149,19 @@ fun EmailQueuePane(
                             .padding(4.dp)
                     ) {
                         Text(
-                            text = "c", 
-                            style = AppTypography.labelSmall, 
+                            text = "c",
+                            style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier
                                 .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("compose", color = EditorialColors.TextMuted, style = AppTypography.labelSmall)
+                        Text("compose", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                     }
                 }
             }
         }
-        
+
         HorizontalDivider(color = EditorialColors.Border, thickness = 1.dp)
 
         // List
@@ -187,12 +192,12 @@ fun EmailQueuePane(
             val unreadCount = emails.count { !it.isRead }
             Text(
                 text = "$unreadCount Unread",
-                style = AppTypography.labelMedium,
+                style = MaterialTheme.typography.labelMedium,
                 color = EditorialColors.TextMuted
             )
             Text(
-                text = "☁ Syncing",
-                style = AppTypography.labelMedium,
+                text = "Synced",
+                style = MaterialTheme.typography.labelMedium,
                 color = EditorialColors.TextMuted
             )
         }
@@ -211,19 +216,23 @@ private fun EmailListItem(
     onArchive: () -> Unit = {},
     onDelete: () -> Unit = {}
 ) {
-    val isHovered = false // Disabled desktop-specific hover for cross-platform commonMain build
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+
+    val backgroundColor = when {
+        isMultiSelected && isHovered -> EditorialColors.SurfaceSelected.copy(alpha = 0.85f)
+        isMultiSelected -> EditorialColors.SurfaceSelected.copy(alpha = 0.5f)
+        isSelected && isHovered -> EditorialColors.SurfaceSelected.copy(alpha = 0.85f)
+        isSelected -> EditorialColors.SurfaceSelected
+        isHovered -> EditorialColors.SurfaceHover
+        else -> EditorialColors.Surface
+    }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clipToBounds()
-            .background(
-                when {
-                    isMultiSelected -> EditorialColors.SurfaceSelected.copy(alpha = 0.5f)
-                    isSelected -> EditorialColors.SurfaceSelected
-                    else -> EditorialColors.Surface
-                }
-            )
+            .background(backgroundColor)
             .drawBehind {
                 if (isSelected) {
                     drawRect(
@@ -234,7 +243,9 @@ private fun EmailListItem(
                 }
             }
             .border(width = 1.dp, color = EditorialColors.Border, shape = RoundedCornerShape(0.dp))
+            .hoverable(interactionSource)
             .clickable(onClick = onClick)
+            .focusRing()
     ) {
         Row(
             modifier = Modifier
@@ -252,7 +263,7 @@ private fun EmailListItem(
                 if (isMultiSelected) {
                     Text(
                         text = "x",
-                        style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = EditorialColors.Primary
                     )
                 } else {
@@ -264,7 +275,7 @@ private fun EmailListItem(
                     )
                 }
             }
-            
+
             if (isExpanded) {
                 // Wide, single-row layout
                 Row(
@@ -273,7 +284,7 @@ private fun EmailListItem(
                 ) {
                     Text(
                         text = email.senderName,
-                        style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         color = EditorialColors.TextPrimary,
                         modifier = Modifier.width(180.dp),
                         maxLines = 1,
@@ -282,14 +293,14 @@ private fun EmailListItem(
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = email.subject,
-                        style = AppTypography.bodyLarge,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = EditorialColors.TextPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "  —  ${email.snippet}",
-                        style = AppTypography.bodyLarge,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = EditorialColors.TextMuted,
                         modifier = Modifier.weight(1f),
                         maxLines = 1,
@@ -304,7 +315,7 @@ private fun EmailListItem(
 
                     Text(
                         text = email.timestampStr,
-                        style = AppTypography.labelMedium,
+                        style = MaterialTheme.typography.labelMedium,
                         color = EditorialColors.TextMuted
                     )
                 }
@@ -317,16 +328,16 @@ private fun EmailListItem(
                     ) {
                         Text(
                             text = email.senderName,
-                            style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                             color = EditorialColors.TextPrimary
                         )
-                        
+
                         if (isHovered && canShowHoverActions) {
                             HoverActions(onArchive = onArchive, onDelete = onDelete)
                         } else {
                             Text(
                                 text = email.timestampStr,
-                                style = AppTypography.labelMedium,
+                                style = MaterialTheme.typography.labelMedium,
                                 color = EditorialColors.TextMuted
                             )
                         }
@@ -334,7 +345,7 @@ private fun EmailListItem(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = email.subject,
-                        style = AppTypography.bodyLarge,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = EditorialColors.TextPrimary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -374,7 +385,7 @@ private fun HoverActionItem(icon: androidx.compose.ui.graphics.vector.ImageVecto
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = shortcut,
-            style = AppTypography.labelSmall,
+            style = MaterialTheme.typography.labelSmall,
             color = EditorialColors.TextMuted,
             modifier = Modifier
                 .border(1.dp, EditorialColors.Border, RoundedCornerShape(2.dp))
