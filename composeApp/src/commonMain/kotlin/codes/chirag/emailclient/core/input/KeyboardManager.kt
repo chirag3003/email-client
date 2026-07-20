@@ -3,9 +3,12 @@ package codes.chirag.emailclient.core.input
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import codes.chirag.emailclient.shared.model.FolderType
+import codes.chirag.emailclient.shared.model.WorkspaceType
 import codes.chirag.emailclient.core.domain.GlobalState
 import codes.chirag.emailclient.features.commands.CommandShortcutHandler
 import codes.chirag.emailclient.features.compose.ComposeShortcutHandler
@@ -41,6 +44,15 @@ class KeyboardManager(
 
     fun handleEvent(event: KeyEvent, state: GlobalState): GlobalState {
         if (event.type != KeyEventType.KeyDown) return state
+
+        // Workspace switching: Ctrl+1/2/3
+        if (event.isCtrlPressed || event.isMetaPressed) {
+            when (event.key) {
+                Key.One -> return state.copy(activeWorkspace = WorkspaceType.GMAIL, activeEmailId = null)
+                Key.Two -> return state.copy(activeWorkspace = WorkspaceType.WORK, activeEmailId = null)
+                Key.Three -> return state.copy(activeWorkspace = WorkspaceType.PERSONAL, activeEmailId = null)
+            }
+        }
 
         // Prefix logic
         if (activePrefixKey == null) {

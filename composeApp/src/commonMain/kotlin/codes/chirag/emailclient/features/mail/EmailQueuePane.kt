@@ -195,11 +195,35 @@ fun EmailQueuePane(
                 style = MaterialTheme.typography.labelMedium,
                 color = EditorialColors.TextMuted
             )
-            Text(
-                text = "Synced",
-                style = MaterialTheme.typography.labelMedium,
-                color = EditorialColors.TextMuted
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // ? help hint
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "?",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = EditorialColors.TextMuted,
+                        modifier = Modifier
+                            .border(1.dp, EditorialColors.Border, RoundedCornerShape(4.dp))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    )
+                    Text(
+                        text = "help",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = EditorialColors.TextMuted
+                    )
+                }
+                Text(
+                    text = "Synced",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = EditorialColors.TextMuted
+                )
+            }
         }
     }
 }

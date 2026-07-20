@@ -94,41 +94,34 @@ fun EmailDetailPane(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("esc", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
-                Text("Close", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                if (email?.folder == FolderType.TRASH) {
-                    Text("r", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
-                    Text("restore", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
-                } else {
-                    Text("e", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
-                    Text("archive", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
-
-                    Text("d", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
-                    Text("delete", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
+                // esc → Close
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("esc", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                    Text("Close", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(4.dp))
 
-                Text("k", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
-                Text("up", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
+                if (email?.folder == FolderType.TRASH) {
+                    // r → Restore
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("r", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                        Text("restore", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
+                    }
+                } else {
+                    // e → Archive
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text("e", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                        Text("archive", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
+                    }
+                }
 
-                Text("j", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
-                Text("down", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable { onComposeClicked() }
-                        .padding(4.dp)
-                ) {
-                    Text("c", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("compose", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
+                // d → Delete
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("d", style = MaterialTheme.typography.labelSmall, modifier = shortcutModifier())
+                    Text("delete", color = EditorialColors.TextMuted, style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
