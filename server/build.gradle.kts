@@ -1,31 +1,24 @@
 plugins {
     kotlin("jvm")
-    alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.ktor)
+    application
 }
 
 group = "codes.chirag.emailclient"
 version = "1.0.0"
 
+application {
+    mainClass.set("codes.chirag.emailclient.server.MainKt")
+}
+
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
+
 dependencies {
-    implementation(projects.shared)
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
-    implementation(libs.ktor.server.auth)
-    implementation(libs.ktor.server.auth.jwt)
-    implementation(libs.ktor.server.content.negotiation)
-    implementation(libs.ktor.serialization.json)
     implementation(libs.logback.classic)
-    implementation(libs.koin.ktor)
-    implementation(libs.koin.logger.slf4j)
-    implementation(libs.exposed.core)
-    implementation(libs.exposed.dao)
-    implementation(libs.exposed.jdbc)
-    implementation(libs.postgresql)
-    implementation(libs.hikaricp)
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockk)
 }
